@@ -9,10 +9,12 @@
     "redis": "^3.0.2"
   },
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "ngrok": "ngrok start local-server -config ./ngrok.yml"
   },
   "devDependencies": {
     "eslint-config-node": "^4.1.0",
+    "ngrok": "^3.3.0",
     "nodemon": "^2.0.6"
   }
 }

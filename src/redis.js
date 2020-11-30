@@ -1,4 +1,4 @@
-import redis from "redis";
+const redis = require("redis");
 
 const globalCache = redis.createClient();
 
@@ -6,4 +6,4 @@ globalCache.on("error", (error) => {
   console.error(error);
 });
 
-export default globalCache;
+module.exports = globalCache;

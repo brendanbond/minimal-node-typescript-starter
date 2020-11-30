@@ -1,12 +1,17 @@
-import path from "path";
-import dotenv from "dotenv";
-import express from "express";
+const path = require("path");
+const dotenv = require("dotenv");
+const express = require("express");
 
-import globalCache from "./redis";
+const globalCache = require("./redis");
 
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 const app = express();
+
+app.post("/webhook", (req, res) => {
+  console.log("Received a POST request!");
+  res.sendStatus(200);
+});
 
 const port = process.env.SERVER_PORT || 3000;
 
