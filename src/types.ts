@@ -1,10 +1,3 @@
-export type Customer = {
-  unVestedPoints: number;
-  vestedPoints: number;
-  redeemed: number[];
-  orders: Order[];
-};
-
 export enum EventType {
   OrderPlaced = 'OrderPlaced',
   OrderCancelled = 'OrderCancelled',
@@ -22,6 +15,13 @@ export type Order = {
   dateTimeCreated: string;
   vested: boolean;
   events: Event[];
+};
+
+export type Customer = {
+  unVestedPoints: number;
+  vestedPoints: number;
+  redeemed: number[];
+  orders: Order[];
 };
 
 export type GlobalCacheState = {
