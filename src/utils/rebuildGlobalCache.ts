@@ -1,11 +1,8 @@
 import dayjs, { Dayjs } from 'dayjs';
 
 import { getOrdersSinceDate } from '../integrations/shopify';
-import {
-  EventType,
-  GlobalCacheState,
-  IShopifyOrdersQueryResponseItem,
-} from '../types';
+import { EventType, GlobalCacheState } from '../types';
+import { IShopifyOrdersQueryResponseItem } from './types';
 import { getCustomerEntry, writeCustomerEntry } from '../interactors';
 import { Customer } from '../types';
 import { asyncForEach } from './asyncForEach';
@@ -45,28 +42,32 @@ export const rebuildGlobalCacheFromDate = async (date: Dayjs) => {
       const vestingDate = createdDate.add(30, 'day');
       const today = dayjs();
 
-      let vested = 0;
-      let unVested = 0;
+      let vestedPoints = 0;
+      let unVestedPoints = 0;
+      let vested = false;
 
       if (today.isBefore(vestingDate)) {
-        unVested = calculatePointsFromOrder(order);
+        unVestedPoints = calculatePointsFromOrder(order);
+        vested = false;
       } else if (today.isAfter(vestingDate)) {
-        vested = calculatePointsFromOrder(order);
+        vestedPoints = calculatePointsFromOrder(order);
+        vested = true;
       }
       const customerEntry = await getCustomerEntry(customerId);
 
       if (customerEntry) {
         const updatedCustomerEntry: Customer = {
           ...customerEntry,
-          unVestedPoints: customerEntry.unVestedPoints + unVested,
-          vestedPoints: customerEntry.vestedPoints + vested,
+          unVestedPoints: customerEntry.unVestedPoints + unVestedPoints,
+          vestedPoints: customerEntry.vestedPoints + vestedPoints,
           orders: [
             ...customerEntry.orders,
             {
               id: orderId,
               dateTimeCreated: createdAt,
+              vested,
               events: [
-                { type: EventType.CacheRebuild, netPoints: vested + unVested },
+                { type: EventType.CacheRebuild, netPoints: vestedPoints + unVestedPoints },
               ],
             },
           ],
@@ -74,15 +75,16 @@ export const rebuildGlobalCacheFromDate = async (date: Dayjs) => {
         await writeCustomerEntry(customerId, updatedCustomerEntry);
       } else {
         const newCustomerEntry: Customer = {
-          unVestedPoints: unVested,
-          vestedPoints: vested,
+          unVestedPoints: unVestedPoints,
+          vestedPoints: vestedPoints,
           redeemed: [],
           orders: [
             {
               id: orderId,
               dateTimeCreated: createdAt,
+              vested,
               events: [
-                { type: EventType.CacheRebuild, netPoints: unVested + vested },
+                { type: EventType.CacheRebuild, netPoints: unVestedPoints + vestedPoints },
               ],
             },
           ],
