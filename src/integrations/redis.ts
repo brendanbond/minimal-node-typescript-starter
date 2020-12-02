@@ -7,6 +7,4 @@ globalCache.on('error', (error) => {
   console.error(error);
 });
 
-export default globalCache;
-
-
+export { globalCache };

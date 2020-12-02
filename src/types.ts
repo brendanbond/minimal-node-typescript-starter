@@ -20,6 +20,7 @@ type Event = {
 export type Order = {
   id: number;
   dateTimeCreated: string;
+  vested: boolean;
   events: Event[];
 };
 

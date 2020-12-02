@@ -39,14 +39,7 @@ export const handleCancelOrderWebhookRequest = async (
         throw new Error('Received cancel webhook for order not in cache');
       const newOrdersArray = [
         ...customerEntry.orders.slice(0, orderIndex),
-        {
-          ...customerEntry.orders[orderIndex],
-          events: [
-            ...customerEntry.orders[orderIndex].events,
-            { type: EventType.OrderCancelled, netPoints: -1 * lessPoints },
-          ],
-        },
-        ...customerEntry.orders.slice(orderIndex, customerEntry.orders.length),
+        ...customerEntry.orders.slice(orderIndex + 1),
       ];
       const updatedCustomerEntry: Customer = {
         ...customerEntry,

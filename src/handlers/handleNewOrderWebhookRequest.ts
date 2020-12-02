@@ -39,6 +39,7 @@ export const handleNewOrderWebhookRequest = async (
           {
             id: orderId,
             dateTimeCreated: createdAt,
+            vested: false,
             events: [{ type: EventType.OrderPlaced, netPoints: newPoints }],
           },
         ],
@@ -53,6 +54,7 @@ export const handleNewOrderWebhookRequest = async (
           {
             id: orderId,
             dateTimeCreated: createdAt,
+            vested: false,
             events: [{ type: EventType.OrderPlaced, netPoints: newPoints }],
           },
         ],

@@ -44,7 +44,7 @@ export const handleRefundOrderWebhookRequest = async (
             { type: EventType.OrderCancelled, netPoints: -1 * lessPoints },
           ],
         },
-        ...customerEntry.orders.slice(orderIndex, customerEntry.orders.length),
+        ...customerEntry.orders.slice(orderIndex + 1, customerEntry.orders.length),
       ];
       const updatedCustomerEntry: Customer = {
         ...customerEntry,

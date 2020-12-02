@@ -1,4 +1,4 @@
-import globalCache from '../integrations/redis';
+import { globalCache } from '../integrations/redis';
 import { Customer } from '../types';
 
 export const getCustomerEntry = (id: number): Promise<Customer | null> => {

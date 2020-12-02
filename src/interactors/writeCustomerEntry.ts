@@ -1,4 +1,4 @@
-import globalCache from '../integrations/redis';
+import { globalCache } from '../integrations/redis';
 import { Customer } from '../types';
 
 export const writeCustomerEntry = (id: number, entry: Customer) => {
@@ -7,7 +7,16 @@ export const writeCustomerEntry = (id: number, entry: Customer) => {
     globalCache.set(`customer:${id}`, entryStr, (err, res) => {
       if (err) {
         reject(err);
-      } else resolve(res);
+      } else {
+        globalCache.sadd('customers', `${id}`, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+        resolve(res);
+      }
     });
   });
 };
