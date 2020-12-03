@@ -5,19 +5,22 @@ import { getCustomerEntry, getOrderEntry } from '../interactors';
 import { Customer } from '../types';
 import { constants } from '../data';
 
-const calculateNextOrderVestingDate = async (customerEntry: Customer) => {
-  const nextUnvestedOrderId = customerEntry.unVestedOrderIds[0];
+const getNextOrderIdAndDateToVest = async (customerEntry: Customer) => {
+  const nextUnVestedOrderId = customerEntry.unVestedOrderIds[0];
   let nextUnvestedOrderEntry;
-  if (nextUnvestedOrderId) {
-    nextUnvestedOrderEntry = await getOrderEntry(nextUnvestedOrderId);
+  if (nextUnVestedOrderId) {
+    nextUnvestedOrderEntry = await getOrderEntry(nextUnVestedOrderId);
   }
   if (nextUnvestedOrderEntry) {
     const orderCreatedAt = dayjs(nextUnvestedOrderEntry.dateTimeCreated);
-    return orderCreatedAt
-      .add(constants.vestTimeAmount, constants.vestTimeUnit)
-      .format('YYYY-MM-DDTHH:mm:ssZ');
+    return [
+      nextUnVestedOrderId,
+      orderCreatedAt
+        .add(constants.vestTimeAmount, constants.vestTimeUnit)
+        .format('YYYY-MM-DDTHH:mm:ssZ'),
+    ];
   }
-  return null;
+  return [null, null];
 };
 
 export const handlePointsRequest = async (req: Request, res: Response) => {
@@ -30,12 +33,14 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
   if (!customerEntry) {
     res.status(404).send('Customer not found');
   } else {
-    const nextOrderVestingDate = await calculateNextOrderVestingDate(
-      customerEntry
-    );
+    const [
+      nextOrderIdToVest,
+      nextOrderVestingDate,
+    ] = await getNextOrderIdAndDateToVest(customerEntry);
     const response = {
       vestedPoints: customerEntry.vestedPoints,
       unVestedPoints: customerEntry.unVestedPoints,
+      nextOrderIdToVest,
       nextOrderVestingDate,
     };
     res.status(200).json(response);

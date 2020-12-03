@@ -1,4 +1,4 @@
-import { handleRedeemRequest } from './handleRedeemReqest';
+import { handleRedeemRequest } from './handleRedeemRequest';
 import { validateRedeemRequest } from './validateRedeemRequest';
 import { handleNewOrderWebhookRequest } from './handleNewOrderWebhookRequest';
 import { handleCancelOrderWebhookRequest } from './handleCancelOrderWebhookRequest';

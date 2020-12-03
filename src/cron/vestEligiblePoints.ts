@@ -37,11 +37,18 @@ export const vestEligiblePoints = async () => {
     );
 
     if (today.isAfter(vestingDate)) {
+      const orderIndex = customerEntry.unVestedOrderIds.findIndex(
+        (unVestedOrderId) => unVestedOrderId === orderId
+      );
       const vestedPoints = orderEntry.netPoints;
       const newCustomerEntry: Customer = {
         ...customerEntry,
         unVestedPoints: customerEntry.unVestedPoints - vestedPoints,
         vestedPoints: customerEntry.vestedPoints + vestedPoints,
+        unVestedOrderIds: [
+          ...customerEntry.unVestedOrderIds.slice(0, orderIndex),
+          ...customerEntry.unVestedOrderIds.slice(orderIndex + 1),
+        ],
       };
       await deleteOrderEntry(orderId);
       await writeCustomerEntry(orderEntry.customerId, newCustomerEntry);
