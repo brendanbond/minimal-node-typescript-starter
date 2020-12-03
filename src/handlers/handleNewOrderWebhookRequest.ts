@@ -1,8 +1,12 @@
 import dayjs from 'dayjs';
 import { Response } from 'express';
 
-import { getCustomerEntry, writeCustomerEntry } from '../interactors';
-import { Customer, EventType } from '../types';
+import {
+  getCustomerEntry,
+  writeCustomerEntry,
+  writeOrderEntry,
+} from '../interactors';
+import { Customer, Order } from '../types';
 import { INewOrderWebhookRequest } from './types';
 
 export const handleNewOrderWebhookRequest = async (
@@ -34,15 +38,6 @@ export const handleNewOrderWebhookRequest = async (
       const updatedCustomerEntry: Customer = {
         ...customerEntry,
         unVestedPoints: customerEntry.unVestedPoints + newPoints,
-        orders: [
-          ...customerEntry.orders,
-          {
-            id: orderId,
-            dateTimeCreated: createdAt,
-            vested: false,
-            events: [{ type: EventType.OrderPlaced, netPoints: newPoints }],
-          },
-        ],
       };
       await writeCustomerEntry(customerId, updatedCustomerEntry);
     } else {
@@ -50,22 +45,24 @@ export const handleNewOrderWebhookRequest = async (
         unVestedPoints: newPoints,
         vestedPoints: 0,
         redeemed: [],
-        orders: [
-          {
-            id: orderId,
-            dateTimeCreated: createdAt,
-            vested: false,
-            events: [{ type: EventType.OrderPlaced, netPoints: newPoints }],
-          },
-        ],
       };
       await writeCustomerEntry(customerId, newCustomerEntry);
     }
+
+    const newOrderEntry: Order = {
+      id: orderId,
+      customerId: customerId,
+      dateTimeCreated: createdAt,
+      vested: false,
+      netPoints: newPoints,
+    };
+    await writeOrderEntry(orderId, newOrderEntry);
+
     res.sendStatus(200);
   } catch (error) {
     console.error('Error while handling order webhook request:', error);
   }
-};
+}; 
 
 /* SHAPE OF ORDER POST REQUEST FROM SHOPIFY API 2020-10:
 {

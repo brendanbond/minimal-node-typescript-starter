@@ -1,61 +1,52 @@
 import dayjs from 'dayjs';
 
 import {
-  getAllCustomerEntryIds,
+  deleteOrderEntry,
+  getAllOrderEntryIds,
   getCustomerEntry,
+  getOrderEntry,
   writeCustomerEntry,
 } from '../interactors';
-import { Customer } from '../types';
+import { Customer, Order } from '../types';
 import { asyncForEach } from '../utils';
 import { constants } from '../data';
 
 export const vestEligiblePoints = async () => {
   const today = dayjs();
-  const customerIds = await getAllCustomerEntryIds();
+  const orderIds = await getAllOrderEntryIds();
   console.log('Vesting eligible points...');
 
-  await asyncForEach<number>(customerIds, async (customerId) => {
-    console.log(`Checking for vested points for customer:${customerId}`);
-    const customerEntry = await getCustomerEntry(customerId);
-    console.log(customerEntry);
-
-    if (!customerEntry)
+  await asyncForEach<number>(orderIds, async (orderId) => {
+    const orderEntry = await getOrderEntry(orderId);
+    if (!orderEntry) {
       throw new Error(
-        'Customer ID contained in customers set not found in key/value store'
+        'Order ID contained in customers set not found in key/value store'
       );
+    }
+    const customerEntry = await getCustomerEntry(orderEntry?.customerId);
+    if (!customerEntry) {
+      throw new Error(
+        'Customer ID contained in order entry does not resolve to customer entry in key/value store'
+      );
+    }
 
-    const newCustomerEntry = customerEntry.orders.reduce((acc, curr, index) => {
-      if (curr.vested) return acc;
+    const createdAt = dayjs(orderEntry.dateTimeCreated);
+    const vestingDate = createdAt.add(
+      constants.vestTimeAmount,
+      constants.vestTimeUnit
+    );
 
-      let vestedPoints = 0;
-      const createdAt = dayjs(curr.dateTimeCreated);
-      if (
-        today.isBefore(
-          createdAt.add(constants.vestTimeAmount, constants.vestTimeUnit)
-        )
-      ) {
-        return acc;
-      } else {
-        vestedPoints = curr.events.reduce(
-          (acc, curr) => acc + curr.netPoints,
-          0
-        );
-      }
-      return {
-        ...acc,
-        unVestedPoints: acc.unVestedPoints - vestedPoints,
-        vestedPoints: acc.vestedPoints + vestedPoints,
-        orders: [
-          ...acc.orders.slice(0, index),
-          {
-            ...acc.orders[index],
-            vested: true,
-          },
-          ...acc.orders.slice(index + 1),
-        ],
+    if (today.isAfter(vestingDate)) {
+      const vestedPoints = orderEntry.netPoints;
+      const newCustomerEntry: Customer = {
+        ...customerEntry,
+        unVestedPoints: customerEntry.unVestedPoints - vestedPoints,
+        vestedPoints: customerEntry.vestedPoints + vestedPoints,
       };
-    }, customerEntry);
-
-    await writeCustomerEntry(customerId, newCustomerEntry);
+      await deleteOrderEntry(orderId);
+      await writeCustomerEntry(orderEntry.customerId, newCustomerEntry);
+    } else {
+      return;
+    }
   });
 };

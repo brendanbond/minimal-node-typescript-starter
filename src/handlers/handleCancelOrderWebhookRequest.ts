@@ -2,8 +2,14 @@ import { error } from 'console';
 import dayjs from 'dayjs';
 import { Response } from 'express';
 
-import { getCustomerEntry, writeCustomerEntry } from '../interactors';
-import { Customer, EventType } from '../types';
+import {
+  getCustomerEntry,
+  writeCustomerEntry,
+  getAllOrderEntryIds,
+  deleteOrderEntry,
+  getOrderEntry,
+} from '../interactors';
+import { Customer, Order } from '../types';
 import { ICancelOrderWebhookRequest } from './types';
 
 export const handleCancelOrderWebhookRequest = async (
@@ -28,27 +34,25 @@ export const handleCancelOrderWebhookRequest = async (
   }
 
   try {
-    const customerEntry = await getCustomerEntry(customerId);
+    const orderEntry = await getOrderEntry(orderId);
     const lessPoints = Math.floor(Number(subTotal));
+    if (orderEntry) {
+      if (orderEntry.vested === false) {
+        const customerEntry = await getCustomerEntry(customerId);
+        if (customerEntry) {
+          const newCustomerEntry: Customer = {
+            ...customerEntry,
+            unVestedPoints: customerEntry.unVestedPoints - lessPoints,
+          };
+          await writeCustomerEntry(customerId, newCustomerEntry);
+        } else {
+          throw new Error(
+            `We have order ${orderId} in the cache but not the associated customer ${customerId}`
+          );
+        }
+      }
 
-    if (customerEntry) {
-      const orderIndex = customerEntry.orders.findIndex(
-        (order) => order.id === orderId
-      );
-      if (orderIndex === -1)
-        throw new Error('Received cancel webhook for order not in cache');
-      const newOrdersArray = [
-        ...customerEntry.orders.slice(0, orderIndex),
-        ...customerEntry.orders.slice(orderIndex + 1),
-      ];
-      const updatedCustomerEntry: Customer = {
-        ...customerEntry,
-        unVestedPoints: customerEntry.unVestedPoints - lessPoints,
-        orders: newOrdersArray,
-      };
-      await writeCustomerEntry(customerId, updatedCustomerEntry);
-    } else {
-      throw new Error('Received cancel webhook for customer not in cache');
+      await deleteOrderEntry(orderId);
     }
     res.sendStatus(200);
   } catch (error) {

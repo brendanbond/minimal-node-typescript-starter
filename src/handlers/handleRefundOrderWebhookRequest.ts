@@ -1,60 +1,52 @@
 import { Response } from 'express';
 
-import { getCustomerEntry, writeCustomerEntry } from '../interactors';
-import { EventType, Customer } from '../types';
-import {IRefundOrderWebhookRequest} from './types';
+import {
+  getCustomerEntry,
+  getOrderEntry,
+  writeCustomerEntry,
+  writeOrderEntry,
+} from '../interactors';
+import { Customer, Order } from '../types';
+import { IRefundOrderWebhookRequest } from './types';
 
 export const handleRefundOrderWebhookRequest = async (
   req: IRefundOrderWebhookRequest,
   res: Response
 ) => {
   const {
-    body: {
-      id: orderId,
-      order_number: orderNumber,
-      refund_line_items: refundLineItems,
-      updated_at: updatedAt,
-      customer: { id: customerId },
-    },
+    body: { order_id: orderId, refund_line_items: refundLineItems },
   } = req;
 
-  if (!orderNumber || refundLineItems.length !== 0 || !updatedAt || !customerId) {
-    res.sendStatus(500);
-    throw new Error(
-      'Received malformed POST request from Shopify order webhook'
-    );
-  }
-
   try {
-    const customerEntry = await getCustomerEntry(customerId);
-    const lessPoints = refundLineItems.reduce((acc, curr) => acc + (curr.quantity * curr.subtotal), 0);
+    const orderEntry = await getOrderEntry(orderId);
 
-    if (customerEntry) {
-      const orderIndex = customerEntry.orders.findIndex(
-        (order) => order.id === orderId
+    if (orderEntry) {
+      const customerId = orderEntry.customerId;
+      const lessPoints = refundLineItems.reduce(
+        (acc, lineItem) => acc + lineItem.quantity * lineItem.subtotal,
+        0
       );
-      if (orderIndex === -1)
-        throw new Error('Received refund webhook for order not in cache');
-      const newOrdersArray = [
-        ...customerEntry.orders.slice(0, orderIndex),
-        {
-          ...customerEntry.orders[orderIndex],
-          events: [
-            ...customerEntry.orders[orderIndex].events,
-            { type: EventType.OrderCancelled, netPoints: -1 * lessPoints },
-          ],
-        },
-        ...customerEntry.orders.slice(orderIndex + 1, customerEntry.orders.length),
-      ];
-      const updatedCustomerEntry: Customer = {
-        ...customerEntry,
-        unVestedPoints: customerEntry.unVestedPoints - lessPoints,
-        orders: newOrdersArray,
+
+      const updatedOrderEntry: Order = {
+        ...orderEntry,
+        netPoints: orderEntry.netPoints - lessPoints,
       };
-      await writeCustomerEntry(customerId, updatedCustomerEntry);
-    } else {
-      throw new Error('Received refund webhook for customer not in cache');
+      await writeOrderEntry(orderId, updatedOrderEntry);
+
+      const customerEntry = await getCustomerEntry(customerId);
+      if (customerEntry) {
+        const newCustomerEntry: Customer = {
+          ...customerEntry,
+          unVestedPoints: customerEntry.unVestedPoints - lessPoints,
+        };
+        await writeCustomerEntry(customerId, newCustomerEntry);
+      } else {
+        throw new Error(
+          `We have order ${orderId} in the cache but not the associated customer ${customerId}`
+        );
+      }
     }
+    res.sendStatus(200);
   } catch (error) {
     console.error('Error while handling refund order webhook request:', error);
   }

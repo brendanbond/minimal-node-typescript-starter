@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
-import dayjs from 'dayjs';
 
 import { getCustomerEntry } from '../interactors';
-import { constants } from '../data';
 
 export const handlePointsRequest = async (req: Request, res: Response) => {
   if (!req.params.customerId)
@@ -14,18 +12,9 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
   if (!customerEntry) {
     res.status(404).send('Customer not found');
   } else {
-    const nextVestedOrder = customerEntry.orders.find(
-      (order) => order.vested === false
-    );
-    const nextVestingDate = nextVestedOrder
-      ? dayjs(nextVestedOrder.dateTimeCreated)
-          .add(constants.vestTimeAmount, constants.vestTimeUnit)
-          .format('YYYY-MM-DDTHH:mm:ssZ')
-      : null;
     const response = {
       vestedPoints: customerEntry.vestedPoints,
       unVestedPoints: customerEntry.unVestedPoints,
-      nextVestingDate,
     };
     res.status(200).json(response);
   }

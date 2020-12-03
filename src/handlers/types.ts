@@ -25,10 +25,7 @@ export interface ICancelOrderWebhookRequest extends Request {
 
 export interface IRefundOrderWebhookRequest extends Request {
   body: {
-    id: number;
-    order_number: number;
+    order_id: number;
     refund_line_items: { quantity: number; subtotal: number }[];
-    updated_at: string;
-    customer: { id: number };
   };
 }

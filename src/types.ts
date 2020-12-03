@@ -1,27 +1,14 @@
-export enum EventType {
-  OrderPlaced = 'OrderPlaced',
-  OrderCancelled = 'OrderCancelled',
-  OrderRefunded = 'OrderRefunded',
-  CacheRebuild = 'CacheRebuild',
-}
-
-type Event = {
-  type: EventType;
-  netPoints: number;
-};
-
 export type Order = {
   id: number;
+  customerId: number;
   dateTimeCreated: string;
-  vested: boolean;
-  events: Event[];
+  netPoints: number;
 };
 
 export type Customer = {
   unVestedPoints: number;
   vestedPoints: number;
   redeemed: number[];
-  orders: Order[];
 };
 
 export type GlobalCacheState = {
