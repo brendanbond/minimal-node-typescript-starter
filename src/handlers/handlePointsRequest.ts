@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import dayjs from 'dayjs';
 
 import { getCustomerEntry } from '../interactors';
+import { constants } from '../data';
 
 export const handlePointsRequest = async (req: Request, res: Response) => {
   if (!req.params.customerId)
@@ -18,7 +19,7 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
     );
     const nextVestingDate = nextVestedOrder
       ? dayjs(nextVestedOrder.dateTimeCreated)
-          .add(30, 'day')
+          .add(constants.vestTimeAmount, constants.vestTimeUnit)
           .format('YYYY-MM-DDTHH:mm:ssZ')
       : null;
     const response = {

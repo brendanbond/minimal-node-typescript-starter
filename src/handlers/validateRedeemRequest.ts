@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import { getCustomerEntry } from '../interactors';
-import gifts from '../data/gifts';
+import { gifts } from '../data';
 
 export const validateRedeemRequest = async (
   req: Request,

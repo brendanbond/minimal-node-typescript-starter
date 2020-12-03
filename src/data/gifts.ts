@@ -1,5 +1,4 @@
-// TODO: substitute database? redis?
-const gifts = [
+export const gifts = [
   {
     id: 1,
     pointsNeeded: 400,
@@ -13,5 +12,3 @@ const gifts = [
     pointsNeeded: 1200,
   },
 ];
-
-export default gifts;

@@ -3,7 +3,7 @@ import { Response } from 'express';
 
 import { getCustomerEntry, writeCustomerEntry } from '../interactors';
 import { Customer, EventType } from '../types';
-import {INewOrderWebhookRequest} from './types'
+import { INewOrderWebhookRequest } from './types';
 
 export const handleNewOrderWebhookRequest = async (
   req: INewOrderWebhookRequest,
@@ -61,6 +61,7 @@ export const handleNewOrderWebhookRequest = async (
       };
       await writeCustomerEntry(customerId, newCustomerEntry);
     }
+    res.sendStatus(200);
   } catch (error) {
     console.error('Error while handling order webhook request:', error);
   }

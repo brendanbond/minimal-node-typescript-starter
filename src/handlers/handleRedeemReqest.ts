@@ -24,6 +24,5 @@ export const handleRedeemRequest = async (req: Request, res: Response) => {
     .catch((err) => {
       return res.status(500).send(err);
     });
-
   //TODO: generate discount
 };

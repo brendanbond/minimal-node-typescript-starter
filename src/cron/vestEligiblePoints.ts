@@ -7,13 +7,17 @@ import {
 } from '../interactors';
 import { Customer } from '../types';
 import { asyncForEach } from '../utils';
+import { constants } from '../data';
 
 export const vestEligiblePoints = async () => {
   const today = dayjs();
   const customerIds = await getAllCustomerEntryIds();
+  console.log('Vesting eligible points...');
 
   await asyncForEach<number>(customerIds, async (customerId) => {
+    console.log(`Checking for vested points for customer:${customerId}`);
     const customerEntry = await getCustomerEntry(customerId);
+    console.log(customerEntry);
 
     if (!customerEntry)
       throw new Error(
@@ -25,10 +29,17 @@ export const vestEligiblePoints = async () => {
 
       let vestedPoints = 0;
       const createdAt = dayjs(curr.dateTimeCreated);
-      if (today.isBefore(createdAt.add(30, 'day'))) {
+      if (
+        today.isBefore(
+          createdAt.add(constants.vestTimeAmount, constants.vestTimeUnit)
+        )
+      ) {
         return acc;
       } else {
-        vestedPoints = curr.events.reduce((acc, curr) => acc + curr.netPoints, 0);
+        vestedPoints = curr.events.reduce(
+          (acc, curr) => acc + curr.netPoints,
+          0
+        );
       }
       return {
         ...acc,
@@ -43,7 +54,7 @@ export const vestEligiblePoints = async () => {
           ...acc.orders.slice(index + 1),
         ],
       };
-    }, {} as Customer);
+    }, customerEntry);
 
     await writeCustomerEntry(customerId, newCustomerEntry);
   });

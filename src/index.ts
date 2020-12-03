@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 
 import { instantiateCronJobs } from './cron';
 import {
@@ -13,6 +14,7 @@ import {
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.post('/new-order-webhook', handleNewOrderWebhookRequest);
 

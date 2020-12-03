@@ -50,6 +50,7 @@ export const handleCancelOrderWebhookRequest = async (
     } else {
       throw new Error('Received cancel webhook for customer not in cache');
     }
+    res.sendStatus(200);
   } catch (error) {
     console.error('Error while handling cancel order webhook request:', error);
   }

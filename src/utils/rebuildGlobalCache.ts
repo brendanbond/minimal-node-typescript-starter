@@ -1,11 +1,11 @@
 import dayjs, { Dayjs } from 'dayjs';
 
 import { getOrdersSinceDate } from '../integrations/shopify';
-import { EventType, GlobalCacheState } from '../types';
-import { IShopifyOrdersQueryResponseItem } from './types';
+import { EventType, IShopifyOrdersQueryResponseItem } from '../types';
 import { getCustomerEntry, writeCustomerEntry } from '../interactors';
 import { Customer } from '../types';
 import { asyncForEach } from './asyncForEach';
+import { constants } from '../data';
 
 const calculatePointsFromOrder = ({
   created_at: createdAt,
@@ -39,7 +39,10 @@ export const rebuildGlobalCacheFromDate = async (date: Dayjs) => {
 
     try {
       const createdDate = dayjs(createdAt);
-      const vestingDate = createdDate.add(30, 'day');
+      const vestingDate = createdDate.add(
+        constants.vestTimeAmount,
+        constants.vestTimeUnit
+      );
       const today = dayjs();
 
       let vestedPoints = 0;
@@ -67,7 +70,10 @@ export const rebuildGlobalCacheFromDate = async (date: Dayjs) => {
               dateTimeCreated: createdAt,
               vested,
               events: [
-                { type: EventType.CacheRebuild, netPoints: vestedPoints + unVestedPoints },
+                {
+                  type: EventType.CacheRebuild,
+                  netPoints: vestedPoints + unVestedPoints,
+                },
               ],
             },
           ],
@@ -84,7 +90,10 @@ export const rebuildGlobalCacheFromDate = async (date: Dayjs) => {
               dateTimeCreated: createdAt,
               vested,
               events: [
-                { type: EventType.CacheRebuild, netPoints: unVestedPoints + vestedPoints },
+                {
+                  type: EventType.CacheRebuild,
+                  netPoints: unVestedPoints + vestedPoints,
+                },
               ],
             },
           ],
