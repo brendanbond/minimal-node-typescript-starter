@@ -3,11 +3,9 @@ import { Response } from 'express';
 import {
   getCustomerEntry,
   writeCustomerEntry,
-  getAllOrderEntryIds,
-  deleteOrderEntry,
   getOrderEntry,
 } from '../interactors';
-import { Customer, Order } from '../types';
+import { Customer } from '../types';
 import { ICancelOrderWebhookRequest } from './types';
 
 export const handleCancelOrderWebhookRequest = async (
