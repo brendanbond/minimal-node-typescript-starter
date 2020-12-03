@@ -1,5 +1,3 @@
-import { error } from 'console';
-import dayjs from 'dayjs';
 import { Response } from 'express';
 
 import {
@@ -35,26 +33,33 @@ export const handleCancelOrderWebhookRequest = async (
 
   try {
     const orderEntry = await getOrderEntry(orderId);
-    const lessPoints = Math.floor(Number(subTotal));
     if (orderEntry) {
-      if (orderEntry.vested === false) {
-        const customerEntry = await getCustomerEntry(customerId);
-        if (customerEntry) {
+      const customerEntry = await getCustomerEntry(customerId);
+      if (customerEntry) {
+        const lessPoints = Math.floor(Number(subTotal));
+        const orderIndex = customerEntry.unVestedOrderIds.findIndex(
+          (unVestedOrderId) => unVestedOrderId === orderId
+        );
+        if (orderIndex > 1) {
           const newCustomerEntry: Customer = {
             ...customerEntry,
             unVestedPoints: customerEntry.unVestedPoints - lessPoints,
+            unVestedOrderIds: [
+              ...customerEntry.unVestedOrderIds.slice(0, orderIndex),
+              ...customerEntry.unVestedOrderIds.slice(orderIndex + 1),
+            ],
           };
           await writeCustomerEntry(customerId, newCustomerEntry);
-        } else {
+        } else
           throw new Error(
-            `We have order ${orderId} in the cache but not the associated customer ${customerId}`
+            `Order ${orderId} exists in key/value store but not in customer object`
           );
-        }
+      } else {
+        throw new Error(
+          `We have order ${orderId} in the cache but not the associated customer ${customerId}`
+        );
       }
-
-      await deleteOrderEntry(orderId);
     }
-    res.sendStatus(200);
   } catch (error) {
     console.error('Error while handling cancel order webhook request:', error);
   }

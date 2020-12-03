@@ -17,6 +17,8 @@ export const handleRefundOrderWebhookRequest = async (
     body: { order_id: orderId, refund_line_items: refundLineItems },
   } = req;
 
+  console.log('Received refund order webhook request:', req.body);
+
   try {
     const orderEntry = await getOrderEntry(orderId);
 

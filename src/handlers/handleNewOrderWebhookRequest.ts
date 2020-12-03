@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { Response } from 'express';
 
 import {
@@ -38,6 +37,7 @@ export const handleNewOrderWebhookRequest = async (
       const updatedCustomerEntry: Customer = {
         ...customerEntry,
         unVestedPoints: customerEntry.unVestedPoints + newPoints,
+        unVestedOrderIds: [...customerEntry.unVestedOrderIds, orderId],
       };
       await writeCustomerEntry(customerId, updatedCustomerEntry);
     } else {
@@ -45,6 +45,7 @@ export const handleNewOrderWebhookRequest = async (
         unVestedPoints: newPoints,
         vestedPoints: 0,
         redeemed: [],
+        unVestedOrderIds: [orderId],
       };
       await writeCustomerEntry(customerId, newCustomerEntry);
     }
@@ -53,7 +54,6 @@ export const handleNewOrderWebhookRequest = async (
       id: orderId,
       customerId: customerId,
       dateTimeCreated: createdAt,
-      vested: false,
       netPoints: newPoints,
     };
     await writeOrderEntry(orderId, newOrderEntry);
@@ -62,7 +62,7 @@ export const handleNewOrderWebhookRequest = async (
   } catch (error) {
     console.error('Error while handling order webhook request:', error);
   }
-}; 
+};
 
 /* SHAPE OF ORDER POST REQUEST FROM SHOPIFY API 2020-10:
 {

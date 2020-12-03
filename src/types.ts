@@ -9,6 +9,7 @@ export type Customer = {
   unVestedPoints: number;
   vestedPoints: number;
   redeemed: number[];
+  unVestedOrderIds: number[];
 };
 
 export type GlobalCacheState = {
