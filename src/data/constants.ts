@@ -3,5 +3,5 @@ export const constants: {
   vestTimeUnit: 'minute' | 'day';
 } = {
   vestTimeUnit: 'minute',
-  vestTimeAmount: 3,
+  vestTimeAmount: 1,
 };

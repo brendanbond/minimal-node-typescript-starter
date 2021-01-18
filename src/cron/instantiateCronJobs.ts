@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 
-import { vestEligiblePoints } from './vestEligiblePoints';
+import { vestEligiblePoints } from './vestEligiblePointsAndUpdateGiftEligibility';
 
 const cronJobs = [() => cron.schedule('* * * * *', vestEligiblePoints)];
 

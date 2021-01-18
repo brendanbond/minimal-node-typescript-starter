@@ -12,7 +12,6 @@ export interface INewOrderWebhookRequest extends Request {
     };
   };
 }
-
 export interface ICancelOrderWebhookRequest extends Request {
   body: {
     id: number;
@@ -22,10 +21,18 @@ export interface ICancelOrderWebhookRequest extends Request {
     customer: { id: number };
   };
 }
-
 export interface IRefundOrderWebhookRequest extends Request {
   body: {
     order_id: number;
     refund_line_items: { quantity: number; subtotal: number }[];
+  };
+}
+
+export interface IRedeemRequest extends Request {
+  body: {
+    customerId: number;
+    available: boolean;
+    productId: number;
+    price: number;
   };
 }

@@ -6,7 +6,7 @@ import {
   writeCustomerEntry,
   writeOrderEntry,
 } from '../interactors';
-import { Customer, Order } from '../types';
+import { CustomerEntry, OrderEntry } from '../types';
 import { IRefundOrderWebhookRequest } from './types';
 
 export const handleRefundOrderWebhookRequest = async (
@@ -29,7 +29,7 @@ export const handleRefundOrderWebhookRequest = async (
         0
       );
 
-      const updatedOrderEntry: Order = {
+      const updatedOrderEntry: OrderEntry = {
         ...orderEntry,
         netPoints: orderEntry.netPoints - lessPoints,
       };
@@ -37,7 +37,7 @@ export const handleRefundOrderWebhookRequest = async (
 
       const customerEntry = await getCustomerEntry(customerId);
       if (customerEntry) {
-        const newCustomerEntry: Customer = {
+        const newCustomerEntry: CustomerEntry = {
           ...customerEntry,
           unVestedPoints: customerEntry.unVestedPoints - lessPoints,
         };

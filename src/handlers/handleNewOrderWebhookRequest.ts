@@ -5,8 +5,9 @@ import {
   writeCustomerEntry,
   writeOrderEntry,
 } from '../interactors';
-import { Customer, Order } from '../types';
+import { CustomerEntry, OrderEntry } from '../types';
 import { INewOrderWebhookRequest } from './types';
+import { gifts } from '../data';
 
 export const handleNewOrderWebhookRequest = async (
   req: INewOrderWebhookRequest,
@@ -34,23 +35,23 @@ export const handleNewOrderWebhookRequest = async (
     const newPoints = Math.floor(Number(subTotal));
 
     if (customerEntry) {
-      const updatedCustomerEntry: Customer = {
+      const updatedCustomerEntry: CustomerEntry = {
         ...customerEntry,
         unVestedPoints: customerEntry.unVestedPoints + newPoints,
         unVestedOrderIds: [...customerEntry.unVestedOrderIds, orderId],
       };
       await writeCustomerEntry(customerId, updatedCustomerEntry);
     } else {
-      const newCustomerEntry: Customer = {
+      const newCustomerEntry: CustomerEntry = {
         unVestedPoints: newPoints,
         vestedPoints: 0,
-        redeemed: [],
         unVestedOrderIds: [orderId],
+        redeemed: [],
       };
       await writeCustomerEntry(customerId, newCustomerEntry);
     }
 
-    const newOrderEntry: Order = {
+    const newOrderEntry: OrderEntry = {
       id: orderId,
       customerId: customerId,
       dateTimeCreated: createdAt,

@@ -1,19 +1,15 @@
-export type Order = {
+export type OrderEntry = {
   id: number;
   customerId: number;
   dateTimeCreated: string;
   netPoints: number;
 };
 
-export type Customer = {
+export type CustomerEntry = {
   unVestedPoints: number;
   vestedPoints: number;
   redeemed: number[];
   unVestedOrderIds: number[];
-};
-
-export type GlobalCacheState = {
-  customers: Customer[];
 };
 
 export interface IShopifyOrdersQueryResponseItem {

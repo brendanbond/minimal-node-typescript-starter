@@ -9,10 +9,11 @@ export const validateRedeemRequest = async (
   next: NextFunction
 ) => {
   const {
-    body: { id, giftId },
+    body: { customerId, giftId },
   } = req;
 
-  if (!id) return res.status(400).send('Bad request: ID cannot be null');
+  if (!customerId)
+    return res.status(400).send('Bad request: ID cannot be null');
   if (!giftId)
     return res
       .status(400)
@@ -20,7 +21,7 @@ export const validateRedeemRequest = async (
   const giftToRedeem = gifts.find((gift) => gift.id === giftId);
   if (!giftToRedeem) return res.status(500).send('Gift to redeem not found');
 
-  const customerEntry = await getCustomerEntry(id);
+  const customerEntry = await getCustomerEntry(customerId);
   if (!customerEntry) return res.status(404).send('Customer not found');
 
   if (

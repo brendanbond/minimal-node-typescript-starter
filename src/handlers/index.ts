@@ -4,6 +4,7 @@ import { handleNewOrderWebhookRequest } from './handleNewOrderWebhookRequest';
 import { handleCancelOrderWebhookRequest } from './handleCancelOrderWebhookRequest';
 import { handleRefundOrderWebhookRequest } from './handleRefundOrderWebhookRequest';
 import { handlePointsRequest } from './handlePointsRequest';
+import { handleValidateRequest } from './handleValidateRequest';
 
 export {
   handleRedeemRequest,
@@ -12,4 +13,5 @@ export {
   handleCancelOrderWebhookRequest,
   handleRefundOrderWebhookRequest,
   handlePointsRequest,
+  handleValidateRequest,
 };

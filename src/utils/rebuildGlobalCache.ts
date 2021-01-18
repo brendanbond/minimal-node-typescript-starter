@@ -3,7 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { getOrdersSinceDate } from '../integrations/shopify';
 import { IShopifyOrdersQueryResponseItem } from '../types';
 import { getCustomerEntry, writeCustomerEntry } from '../interactors';
-import { Customer } from '../types';
+import { CustomerEntry } from '../types';
 import { asyncForEach } from './asyncForEach';
 import { constants } from '../data';
 

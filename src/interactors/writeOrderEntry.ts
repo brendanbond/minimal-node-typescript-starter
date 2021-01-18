@@ -1,7 +1,7 @@
 import { globalCache } from '../integrations/redis';
-import { Order } from '../types';
+import { OrderEntry } from '../types';
 
-export const writeOrderEntry = (id: number, entry: Order) => {
+export const writeOrderEntry = (id: number, entry: OrderEntry) => {
   return new Promise((resolve, reject) => {
     const entryStr = JSON.stringify(entry);
     globalCache.set(`order:${id}`, entryStr, (err, res) => {

@@ -5,7 +5,7 @@ import {
   writeCustomerEntry,
   getOrderEntry,
 } from '../interactors';
-import { Customer } from '../types';
+import { CustomerEntry } from '../types';
 import { ICancelOrderWebhookRequest } from './types';
 
 export const handleCancelOrderWebhookRequest = async (
@@ -39,7 +39,7 @@ export const handleCancelOrderWebhookRequest = async (
           (unVestedOrderId) => unVestedOrderId === orderId
         );
         if (orderIndex > 1) {
-          const newCustomerEntry: Customer = {
+          const newCustomerEntry: CustomerEntry = {
             ...customerEntry,
             unVestedPoints: customerEntry.unVestedPoints - lessPoints,
             unVestedOrderIds: [

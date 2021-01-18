@@ -2,23 +2,25 @@ import { Request, Response } from 'express';
 import dayjs from 'dayjs';
 
 import { getCustomerEntry, getOrderEntry } from '../interactors';
-import { Customer } from '../types';
+import { CustomerEntry } from '../types';
 import { constants } from '../data';
 
-const getNextOrderIdAndDateToVest = async (customerEntry: Customer) => {
-  const nextUnVestedOrderId = customerEntry.unVestedOrderIds[0];
-  let nextUnvestedOrderEntry;
-  if (nextUnVestedOrderId) {
-    nextUnvestedOrderEntry = await getOrderEntry(nextUnVestedOrderId);
-  }
-  if (nextUnvestedOrderEntry) {
-    const orderCreatedAt = dayjs(nextUnvestedOrderEntry.dateTimeCreated);
-    return [
-      nextUnVestedOrderId,
-      orderCreatedAt
-        .add(constants.vestTimeAmount, constants.vestTimeUnit)
-        .format('YYYY-MM-DDTHH:mm:ssZ'),
-    ];
+const getNextOrderIdAndDateToVest = async (customerEntry: CustomerEntry) => {
+  if (customerEntry.unVestedOrderIds) {
+    const nextUnVestedOrderId = customerEntry.unVestedOrderIds[0];
+    let nextUnvestedOrderEntry;
+    if (nextUnVestedOrderId) {
+      nextUnvestedOrderEntry = await getOrderEntry(nextUnVestedOrderId);
+    }
+    if (nextUnvestedOrderEntry) {
+      const orderCreatedAt = dayjs(nextUnvestedOrderEntry.dateTimeCreated);
+      return [
+        nextUnVestedOrderId,
+        orderCreatedAt
+          .add(constants.vestTimeAmount, constants.vestTimeUnit)
+          .format('YYYY-MM-DDTHH:mm:ssZ'),
+      ];
+    }
   }
   return [null, null];
 };
@@ -42,6 +44,7 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
       unVestedPoints: customerEntry.unVestedPoints,
       nextOrderIdToVest,
       nextOrderVestingDate,
+      redeemed: customerEntry.redeemed,
     };
     res.status(200).json(response);
   }

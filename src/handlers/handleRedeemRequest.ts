@@ -1,28 +1,49 @@
-import { Request, Response, NextFunction } from 'express';
-import { writeCustomerEntry } from '../interactors';
+import { Response } from 'express';
 
-export const handleRedeemRequest = async (req: Request, res: Response) => {
+import { IRedeemRequest } from './types';
+
+export const handleRedeemRequest = async (
+  req: IRedeemRequest,
+  res: Response
+) => {
   const {
-    body: { id, giftId },
+    body: { customerId },
   } = req;
   const customerEntry = res.locals.customerEntry;
 
-  if (!id || !giftId || !customerEntry)
+  if (!customerId || !customerEntry) {
     return res
       .status(500)
       .send(
         'Error during redeem request - lost customer object or request params'
       );
-
-  writeCustomerEntry(id, {
-    ...customerEntry,
-    redeemed: [...customerEntry.redeemed, giftId],
-  })
-    .then(() => {
-      return res.sendStatus(200);
-    })
-    .catch((err) => {
-      return res.status(500).send(err);
-    });
-  //TODO: generate discount
+  }
+  try {
+  } catch (error) {
+    // deal with error
+  }
 };
+
+/*
+available: (...)
+barcode: (...)
+compare_at_price: (...)
+featured_image: (...)
+featured_media: (...)
+id: (...)
+inventory_management: (...)
+name: (...)
+option1: (...)
+option2: (...)
+option3: (...)
+options: (...)
+price: (...)
+public_title: (...)
+requires_selling_plan: (...)
+requires_shipping: (...)
+selling_plan_allocations: (...)
+sku: (...)
+taxable: (...)
+title: (...)
+weight: (...)
+*/

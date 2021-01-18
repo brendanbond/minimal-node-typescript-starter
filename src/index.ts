@@ -10,28 +10,23 @@ import {
   handleCancelOrderWebhookRequest,
   handleRefundOrderWebhookRequest,
   handlePointsRequest,
+  handleValidateRequest,
 } from './handlers';
 
-const app = express();
+instantiateCronJobs();
 
+const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
 app.post('/new-order-webhook', handleNewOrderWebhookRequest);
-
 app.post('/cancel-order-webhook', handleCancelOrderWebhookRequest);
-
 app.post('/refund-order-webhook', handleRefundOrderWebhookRequest);
-
 app.post('/redeem', validateRedeemRequest, handleRedeemRequest);
-
 app.get('/points/:customerId', handlePointsRequest);
+app.get('/validate/:customerId', handleValidateRequest);
 
-instantiateCronJobs();
-
-const port = Number(process.env.SERVER_PORT) || 3000;
-
-app.listen(port, '127.0.0.1', () => {
-  console.log('HTTP Server running on port ' + port);
+app.listen(process.env.SERVER_PORT || 3000, () => {
+  console.log(`Listening on port ${process.env.SERVER_PORT || 3000}`);
 });
