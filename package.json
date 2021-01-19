@@ -15,7 +15,7 @@
     "redis": "^3.0.2"
   },
   "scripts": {
-    "develop": "nodemon src/index.js",
+    "develop": "NODE_ENV=development nodemon src/index.js",
     "ngrok": "ngrok start local-server -config ./ngrok.yml",
     "test": "jest"
   },

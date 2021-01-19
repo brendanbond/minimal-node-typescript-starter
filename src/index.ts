@@ -29,4 +29,5 @@ app.get('/validate/:customerId', handleValidateRequest);
 
 app.listen(process.env.SERVER_PORT || 3000, () => {
   console.log(`Listening on port ${process.env.SERVER_PORT || 3000}`);
+  console.log("NODE_ENV =", process.env.NODE_ENV)
 });

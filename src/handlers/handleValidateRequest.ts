@@ -24,7 +24,7 @@ export const handleValidateRequest = async (req: Request, res: Response) => {
     res.status(404).send('Customer not found');
   } else {
     const response =
-      customerEntry.vestedPoints > gift.pointsNeeded &&
+      customerEntry.vestedPoints >= gift.pointsNeeded &&
       collectionId === gift.collectionId;
     res.status(200).json(response);
   }

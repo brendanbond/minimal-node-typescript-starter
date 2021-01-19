@@ -33,12 +33,20 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
 
   const customerEntry = await getCustomerEntry(customerId);
   if (!customerEntry) {
-    res.status(404).send('Customer not found');
+    const response = {
+      vestedPoints: 0,
+      unVestedPoints: 0,
+      nextOrderIdToVest: null,
+      nextOrderVestingDate: null,
+      redeemed: [],
+    };
+    res.status(200).json(response);
   } else {
     const [
       nextOrderIdToVest,
       nextOrderVestingDate,
     ] = await getNextOrderIdAndDateToVest(customerEntry);
+    // TODO: type these responses
     const response = {
       vestedPoints: customerEntry.vestedPoints,
       unVestedPoints: customerEntry.unVestedPoints,

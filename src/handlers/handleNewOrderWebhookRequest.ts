@@ -7,7 +7,14 @@ import {
 } from '../interactors';
 import { CustomerEntry, OrderEntry } from '../types';
 import { INewOrderWebhookRequest } from './types';
-import { gifts } from '../data';
+
+const lineItemsContainTestProduct = (
+  lineItems: INewOrderWebhookRequest['body']['line_items']
+) => {
+  return lineItems.some(
+    (lineItem) => lineItem.product_id === Number(process.env.TEST_PRODUCT_ID)
+  );
+};
 
 export const handleNewOrderWebhookRequest = async (
   req: INewOrderWebhookRequest,
@@ -20,6 +27,7 @@ export const handleNewOrderWebhookRequest = async (
       subtotal_price: subTotal,
       created_at: createdAt,
       customer: { id: customerId },
+      line_items: lineItems,
     },
   } = req;
 
@@ -30,9 +38,19 @@ export const handleNewOrderWebhookRequest = async (
     );
   }
 
+  console.log("Got a new order....", req.body);
+
   try {
     const customerEntry = await getCustomerEntry(customerId);
-    const newPoints = Math.floor(Number(subTotal));
+    let newPoints;
+    if (
+      process.env.NODE_ENV === 'development' &&
+      lineItemsContainTestProduct(lineItems)
+    ) {
+      newPoints = 200;
+    } else {
+      newPoints = Math.floor(Number(subTotal));
+    }
 
     if (customerEntry) {
       const updatedCustomerEntry: CustomerEntry = {

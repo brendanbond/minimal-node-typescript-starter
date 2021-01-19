@@ -10,6 +10,9 @@ export interface INewOrderWebhookRequest extends Request {
     customer: {
       id: number;
     };
+    line_items: {
+      product_id: number;
+    }[];
   };
 }
 export interface ICancelOrderWebhookRequest extends Request {
