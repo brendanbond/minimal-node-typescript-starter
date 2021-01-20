@@ -17,7 +17,10 @@ export const handleValidateRequest = async (req: Request, res: Response) => {
       .send('Bad request: collection query parameter cannot be null');
 
   const gift = gifts.find((gift) => gift.collectionId === collectionId);
-  if (!gift) return res.status(404).send(`Gift with collection ID ${collectionId} not found`);
+  if (!gift)
+    return res
+      .status(404)
+      .send(`Gift with collection ID ${collectionId} not found`);
 
   const customerEntry = await getCustomerEntry(customerId);
   if (!customerEntry) {

@@ -1,6 +1,11 @@
 import { Response } from 'express';
-
 import { IRedeemRequest } from './types';
+import { generateEncodedPriceRuleTitle } from '../utils/priceRuleTitle';
+import {
+  createPriceRule,
+  createDiscountCode,
+} from '../integrations/shopify/priceRules';
+import { calculateSumPriceOfTargetVariants } from '../integrations/shopify/products';
 
 export const handleRedeemRequest = async (
   req: IRedeemRequest,
@@ -10,7 +15,6 @@ export const handleRedeemRequest = async (
     body: { customerId },
   } = req;
   const customerEntry = res.locals.customerEntry;
-
   if (!customerId || !customerEntry) {
     return res
       .status(500)
@@ -19,6 +23,22 @@ export const handleRedeemRequest = async (
       );
   }
   try {
+    const { selectedVariants } = req.body;
+    const newTitle = generateEncodedPriceRuleTitle(
+      selectedVariants.map(({ giftLevel }) => giftLevel)
+    );
+    const targetVariantIds = selectedVariants.map(({ variantId }) => variantId);
+    const amount = await calculateSumPriceOfTargetVariants(targetVariantIds);
+    const priceRule: any = await createPriceRule({
+      customerId,
+      amount,
+      targetVariantIds: selectedVariants.map(({ variantId }) => variantId),
+    });
+    const discountCode = await createDiscountCode({
+      priceRuleId: priceRule.id,
+      priceRuleTitle: priceRule.title,
+    });
+    res.send(discountCode);
   } catch (error) {
     // deal with error
   }

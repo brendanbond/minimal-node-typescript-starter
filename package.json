@@ -12,7 +12,8 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "node-cron": "^2.0.3",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "develop": "NODE_ENV=development nodemon src/index.js",
@@ -28,6 +29,7 @@
     "@types/node-cron": "^2.0.3",
     "@types/redis": "^2.8.28",
     "@types/redis-mock": "^0.17.0",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.10.0",
     "eslint-config-node": "^4.1.0",

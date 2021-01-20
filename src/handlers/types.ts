@@ -7,6 +7,7 @@ export interface INewOrderWebhookRequest extends Request {
     created_at: string;
     updated_at: string;
     subtotal_price: string;
+    discount_codes: string[];
     customer: {
       id: number;
     };
@@ -37,5 +38,9 @@ export interface IRedeemRequest extends Request {
     available: boolean;
     productId: number;
     price: number;
+    selectedVariants: {
+      variantId: number;
+      giftLevel: number;
+    }[];
   };
 }

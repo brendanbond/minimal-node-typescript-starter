@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import axios from 'axios';
+import axiosRetry from 'axios-retry';
+axiosRetry(axios, { retries: 10, retryDelay: axiosRetry.exponentialDelay });
 
 import { instantiateCronJobs } from './cron';
 import {
@@ -29,5 +32,5 @@ app.get('/validate/:customerId', handleValidateRequest);
 
 app.listen(process.env.SERVER_PORT || 3000, () => {
   console.log(`Listening on port ${process.env.SERVER_PORT || 3000}`);
-  console.log("NODE_ENV =", process.env.NODE_ENV)
+  console.log('NODE_ENV =', process.env.NODE_ENV);
 });

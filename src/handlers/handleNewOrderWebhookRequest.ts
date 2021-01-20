@@ -4,9 +4,11 @@ import {
   getCustomerEntry,
   writeCustomerEntry,
   writeOrderEntry,
+  markGiftsRedeemed,
 } from '../interactors';
 import { CustomerEntry, OrderEntry } from '../types';
 import { INewOrderWebhookRequest } from './types';
+import { decodePriceRuleTitle } from '../utils/priceRuleTitle';
 
 const lineItemsContainTestProduct = (
   lineItems: INewOrderWebhookRequest['body']['line_items']
@@ -14,6 +16,15 @@ const lineItemsContainTestProduct = (
   return lineItems.some(
     (lineItem) => lineItem.product_id === Number(process.env.TEST_PRODUCT_ID)
   );
+};
+
+const discountCodeRedeemsGift = (discountCode: string) => {
+  try {
+    decodePriceRuleTitle(discountCode);
+  } catch (e) {
+    return false;
+  }
+  return true;
 };
 
 export const handleNewOrderWebhookRequest = async (
@@ -28,6 +39,7 @@ export const handleNewOrderWebhookRequest = async (
       created_at: createdAt,
       customer: { id: customerId },
       line_items: lineItems,
+      discount_codes: discountCodes,
     },
   } = req;
 
@@ -38,7 +50,7 @@ export const handleNewOrderWebhookRequest = async (
     );
   }
 
-  console.log("Got a new order....", req.body);
+  console.log('Got a new order....', req.body);
 
   try {
     const customerEntry = await getCustomerEntry(customerId);
@@ -76,6 +88,15 @@ export const handleNewOrderWebhookRequest = async (
       netPoints: newPoints,
     };
     await writeOrderEntry(orderId, newOrderEntry);
+
+    await Promise.all(
+      discountCodes.map(async (discountCode) => {
+        if (discountCodeRedeemsGift(discountCode)) {
+          const giftsToBeRedeemed = decodePriceRuleTitle(discountCode);
+          await markGiftsRedeemed(customerId, giftsToBeRedeemed);
+        }
+      })
+    );
 
     res.sendStatus(200);
   } catch (error) {
