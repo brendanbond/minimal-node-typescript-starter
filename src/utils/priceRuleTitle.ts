@@ -1,15 +1,13 @@
 // price rule string schema - LOYALTY(|GIFT1)(|GIFT2)(|GIFT3)|<random string>
 import { v4 as uuid } from 'uuid';
 
-export const generateEncodedPriceRuleTitle = (
-  giftLevelsBeingRedeemed: number[]
-) => {
-  if (giftLevelsBeingRedeemed.length === 0) {
+export const generateEncodedPriceRuleTitle = (giftLevelIds: number[]) => {
+  if (giftLevelIds.length === 0) {
     throw new Error('No gift indexes given when requesting price rule title');
   }
   let string = 'LOYALTY';
-  giftLevelsBeingRedeemed.forEach((giftLevel) => {
-    string = string + `|GIFT${giftLevel}`;
+  giftLevelIds.forEach((giftLevelId) => {
+    string = string + `|GIFT${giftLevelId}`;
   });
   return `${string}|${uuid()}`;
 };

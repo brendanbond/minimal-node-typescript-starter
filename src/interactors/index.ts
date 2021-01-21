@@ -6,6 +6,7 @@ import { writeOrderEntry } from './writeOrderEntry';
 import { getAllOrderEntryIds } from './getAllOrderEntryIds';
 import { deleteOrderEntry } from './deleteOrderEntry';
 import { markGiftsRedeemed } from './markGiftsRedeemed';
+import { markGiftsTransacting } from './markGiftsTransacting';
 
 export {
   getCustomerEntry,
@@ -16,4 +17,5 @@ export {
   getAllOrderEntryIds,
   deleteOrderEntry,
   markGiftsRedeemed,
+  markGiftsTransacting,
 };

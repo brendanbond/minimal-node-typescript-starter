@@ -76,7 +76,8 @@ export const handleNewOrderWebhookRequest = async (
         unVestedPoints: newPoints,
         vestedPoints: 0,
         unVestedOrderIds: [orderId],
-        redeemed: [],
+        gifts: [],
+        currentPriceRuleId: null,
       };
       await writeCustomerEntry(customerId, newCustomerEntry);
     }
@@ -92,8 +93,8 @@ export const handleNewOrderWebhookRequest = async (
     await Promise.all(
       discountCodes.map(async (discountCode) => {
         if (discountCodeRedeemsGift(discountCode)) {
-          const giftsToBeRedeemed = decodePriceRuleTitle(discountCode);
-          await markGiftsRedeemed(customerId, giftsToBeRedeemed);
+          const giftLevelIdsToBeRedeemed = decodePriceRuleTitle(discountCode);
+          await markGiftsRedeemed(customerId, giftLevelIdsToBeRedeemed);
         }
       })
     );

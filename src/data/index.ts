@@ -1,4 +1,4 @@
 import { constants } from './constants';
-import { gifts } from './gifts';
+import { giftLevels } from './giftLevels';
 
-export { gifts, constants };
+export { giftLevels, constants };

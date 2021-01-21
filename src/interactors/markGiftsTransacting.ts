@@ -14,13 +14,13 @@ const constructNewGifts = (
     }
     newGifts[idx] = {
       ...newGifts[idx],
-      status: GiftRedemptionStatus.REDEEMED,
+      status: GiftRedemptionStatus.TRANSACTING,
     };
   });
   return newGifts;
 };
 
-export const markGiftsRedeemed = (
+export const markGiftsTransacting = (
   customerId: number,
   giftLevelIds: number[]
 ) => {
@@ -29,7 +29,7 @@ export const markGiftsRedeemed = (
     const customerEntry = await getCustomerEntry(customerId);
     if (!customerEntry) {
       throw new Error(
-        `no customer found for customer Id ${customerId} while marking gifts redeemed`
+        `no customer found for customer Id ${customerId} while marking gifts transacting`
       );
     }
     const newEntry: CustomerEntry = {

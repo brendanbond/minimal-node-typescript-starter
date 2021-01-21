@@ -52,7 +52,7 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
       unVestedPoints: customerEntry.unVestedPoints,
       nextOrderIdToVest,
       nextOrderVestingDate,
-      redeemed: customerEntry.redeemed,
+      gifts: customerEntry.gifts,
     };
     res.status(200).json(response);
   }

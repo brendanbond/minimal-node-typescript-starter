@@ -5,13 +5,30 @@ export type OrderEntry = {
   netPoints: number;
 };
 
+export enum GiftRedemptionStatus {
+  PENDING = 'PENDING', // in the cart
+  TRANSACTING = 'TRANSACTING', // gone to the checkout page
+  REDEEMED = 'REDEEMED', // order using the relevant discount code has been processed
+}
+
+export type GiftStatus = {
+  giftLevelId: number;
+  status: GiftRedemptionStatus;
+  priceRuleId: number | null; // the price rule (currently) assigned which redeems this gift
+};
+
 export type CustomerEntry = {
   unVestedPoints: number;
   vestedPoints: number;
-  redeemed: number[];
+  gifts: GiftStatus[];
   unVestedOrderIds: number[];
+  currentPriceRuleId: number | null; // users may only have one price rule in the wild at a time
 };
 
+export interface ITargetVariant {
+  variantId: number;
+  giftLevelId: number;
+}
 export interface IShopifyOrdersQueryResponseItem {
   id: number;
   created_at: string;

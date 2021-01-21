@@ -1,20 +1,21 @@
 import axios from 'axios';
 import { ROOT_ENDPOINT } from '../../data/constants';
-import { v4 as uuid } from 'uuid';
 
 export const createPriceRule = ({
   amount,
   customerId,
   targetVariantIds,
+  newTitle,
 }: {
   amount: number;
   customerId: number;
   targetVariantIds: number[];
+  newTitle: string;
 }) => {
   return axios.post(ROOT_ENDPOINT + '/price_rules.json', {
     data: {
       price_rule: {
-        title: 'loyalty-' + uuid(),
+        title: newTitle,
         value_type: 'fixed_amount',
         value: `-${amount}`,
         customer_selection: 'prerequisite',
@@ -37,8 +38,8 @@ export const updatePriceRule = ({
   updatedTargetVariantIds,
 }: {
   newAmount: number;
-  priceRuleId: string;
-  updatedTargetVariantIds: string[];
+  priceRuleId: number;
+  updatedTargetVariantIds: number[];
 }) => {
   return axios.put(ROOT_ENDPOINT + `/price_rules/${priceRuleId}.json`, {
     data: {
@@ -51,14 +52,14 @@ export const updatePriceRule = ({
   });
 };
 
-export const createDiscountCode = ({
+export const createDiscountCode = async ({
   priceRuleId,
   priceRuleTitle,
 }: {
-  priceRuleId: string;
+  priceRuleId: number;
   priceRuleTitle: string;
 }) => {
-  return axios.post(
+  const res = await axios.post(
     ROOT_ENDPOINT + `/price_rules/${priceRuleId}/discount_codes.json`,
     {
       data: {
@@ -68,4 +69,10 @@ export const createDiscountCode = ({
       },
     }
   );
+  if (typeof res.data.discount_code?.code !== 'string') {
+    throw new Error(
+      'problem generating discount code for priceRuleId ' + priceRuleId
+    );
+  }
+  return res.data.discount_code?.code as string;
 };

@@ -1,4 +1,4 @@
-export const gifts = [
+export const giftLevels = [
   {
     id: 1,
     pointsNeeded: 400,

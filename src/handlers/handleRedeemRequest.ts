@@ -1,11 +1,14 @@
 import { Response } from 'express';
 import { IRedeemRequest } from './types';
+import { CustomerEntry, ITargetVariant } from '../types';
 import { generateEncodedPriceRuleTitle } from '../utils/priceRuleTitle';
 import {
   createPriceRule,
   createDiscountCode,
+  updatePriceRule,
 } from '../integrations/shopify/priceRules';
 import { calculateSumPriceOfTargetVariants } from '../integrations/shopify/products';
+import { markGiftsTransacting } from '../interactors';
 
 export const handleRedeemRequest = async (
   req: IRedeemRequest,
@@ -14,7 +17,8 @@ export const handleRedeemRequest = async (
   const {
     body: { customerId },
   } = req;
-  const customerEntry = res.locals.customerEntry;
+  const customerEntry = res.locals.customerEntry as CustomerEntry;
+  const targetVariants = res.locals.targetVariants as ITargetVariant[];
   if (!customerId || !customerEntry) {
     return res
       .status(500)
@@ -22,23 +26,41 @@ export const handleRedeemRequest = async (
         'Error during redeem request - lost customer object or request params'
       );
   }
+
+  markGiftsTransacting(
+    customerId,
+    targetVariants.map(({ giftLevelId }) => giftLevelId)
+  );
+
+  const targetVariantIds = targetVariants.map(({ variantId }) => variantId);
+  const amount = await calculateSumPriceOfTargetVariants(targetVariantIds);
   try {
-    const { selectedVariants } = req.body;
-    const newTitle = generateEncodedPriceRuleTitle(
-      selectedVariants.map(({ giftLevel }) => giftLevel)
-    );
-    const targetVariantIds = selectedVariants.map(({ variantId }) => variantId);
-    const amount = await calculateSumPriceOfTargetVariants(targetVariantIds);
-    const priceRule: any = await createPriceRule({
-      customerId,
-      amount,
-      targetVariantIds: selectedVariants.map(({ variantId }) => variantId),
-    });
-    const discountCode = await createDiscountCode({
-      priceRuleId: priceRule.id,
-      priceRuleTitle: priceRule.title,
-    });
-    res.send(discountCode);
+    let priceRule: any;
+    let discountCode: string;
+    if (customerEntry.currentPriceRuleId) {
+      priceRule = await updatePriceRule({
+        newAmount: amount,
+        priceRuleId: customerEntry.currentPriceRuleId,
+        updatedTargetVariantIds: targetVariantIds,
+      });
+      discountCode = priceRule.title;
+    } else {
+      const newTitle = generateEncodedPriceRuleTitle(
+        targetVariants.map(({ giftLevelId }) => giftLevelId)
+      );
+      priceRule = await createPriceRule({
+        customerId,
+        amount,
+        targetVariantIds: targetVariants.map(({ variantId }) => variantId),
+        newTitle,
+      });
+      discountCode = await createDiscountCode({
+        priceRuleId: priceRule.id,
+        priceRuleTitle: priceRule.title,
+      });
+    }
+
+    res.send({ discountCode });
   } catch (error) {
     // deal with error
   }
