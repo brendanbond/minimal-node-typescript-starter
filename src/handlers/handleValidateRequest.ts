@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { getCustomerEntry } from '../interactors';
-import { gifts } from '../data';
+import { giftLevels } from '../data';
 
 export const handleValidateRequest = async (req: Request, res: Response) => {
   const customerId = Number(req.params.customerId);
@@ -16,7 +16,7 @@ export const handleValidateRequest = async (req: Request, res: Response) => {
       .status(400)
       .send('Bad request: collection query parameter cannot be null');
 
-  const gift = gifts.find((gift) => gift.collectionId === collectionId);
+  const gift = giftLevels.find((gift) => gift.collectionId === collectionId);
   if (!gift)
     return res
       .status(404)
