@@ -1,21 +1,30 @@
 import { globalCache } from '../integrations/redis';
-import { CustomerEntry, GiftRedemptionStatus } from '../types';
+import { CustomerEntry, GiftRedemptionStatus, GiftStatus } from '../types';
 import { getCustomerEntry } from './getCustomerEntry';
 
 const constructNewGifts = (
   curGifts: CustomerEntry['gifts'],
-  giftLevelIds: number[]
+  giftLevelIds: number[],
+  priceRuleId: number
 ) => {
   let newGifts = curGifts.slice();
   giftLevelIds.forEach((id) => {
     const idx = newGifts.findIndex(({ giftLevelId }) => giftLevelId === id);
+    let newGift: GiftStatus;
     if (idx === -1) {
-      throw new Error('thats weird, should exist');
+      newGift = {
+        giftLevelId: id,
+        status: GiftRedemptionStatus.TRANSACTING,
+        priceRuleId,
+      };
+    } else {
+      newGift = {
+        ...newGifts[idx],
+        status: GiftRedemptionStatus.TRANSACTING,
+        priceRuleId,
+      };
     }
-    newGifts[idx] = {
-      ...newGifts[idx],
-      status: GiftRedemptionStatus.TRANSACTING,
-    };
+    newGifts.push(newGift);
   });
   return newGifts;
 };
