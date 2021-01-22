@@ -59,7 +59,7 @@ export const handleNewOrderWebhookRequest = async (
       process.env.NODE_ENV === 'development' &&
       lineItemsContainTestProduct(lineItems)
     ) {
-      newPoints = 200;
+      newPoints = 2000;
     } else {
       newPoints = Math.floor(Number(subTotal));
     }
