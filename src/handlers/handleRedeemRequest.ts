@@ -27,11 +27,6 @@ export const handleRedeemRequest = async (
       );
   }
 
-  markGiftsTransacting(
-    customerId,
-    targetVariants.map(({ giftLevelId }) => giftLevelId)
-  );
-
   const targetVariantIds = targetVariants.map(({ variantId }) => variantId);
   const amount = await calculateSumPriceOfTargetVariants(targetVariantIds);
   try {
@@ -59,6 +54,12 @@ export const handleRedeemRequest = async (
         priceRuleTitle: priceRule.title,
       });
     }
+
+    markGiftsTransacting(
+      customerId,
+      targetVariants.map(({ giftLevelId }) => giftLevelId),
+      priceRule.id
+    );
 
     res.send({ discountCode });
   } catch (error) {

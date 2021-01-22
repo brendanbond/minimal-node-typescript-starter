@@ -31,7 +31,8 @@ const constructNewGifts = (
 
 export const markGiftsTransacting = (
   customerId: number,
-  giftLevelIds: number[]
+  giftLevelIds: number[],
+  priceRuleId: number
 ) => {
   return new Promise(async (resolve, reject) => {
     // const entryStr = JSON.stringify(entry);
@@ -43,7 +44,7 @@ export const markGiftsTransacting = (
     }
     const newEntry: CustomerEntry = {
       ...customerEntry,
-      gifts: constructNewGifts(customerEntry.gifts, giftLevelIds),
+      gifts: constructNewGifts(customerEntry.gifts, giftLevelIds, priceRuleId),
     };
     globalCache.set(
       `customer:${customerId}`,
