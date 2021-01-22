@@ -35,9 +35,6 @@ export interface IRefundOrderWebhookRequest extends Request {
 export interface IRedeemRequest extends Request {
   body: {
     customerId: number;
-    available: boolean;
-    productId: number;
-    price: number;
     selectedVariants: {
       variantId: number;
       giftLevel: number;

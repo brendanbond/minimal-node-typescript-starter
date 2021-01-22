@@ -1,7 +1,8 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-export const createPriceRule = ({
+export const createPriceRule = async ({
   amount,
   customerId,
   targetVariantIds,
@@ -12,8 +13,8 @@ export const createPriceRule = ({
   targetVariantIds: number[];
   newTitle: string;
 }) => {
-  return axios.post(ROOT_ENDPOINT + '/price_rules.json', {
-    data: {
+  try {
+    const response = await axios.post(ROOT_ENDPOINT + '/price_rules.json', {
       price_rule: {
         title: newTitle,
         value_type: 'fixed_amount',
@@ -23,13 +24,17 @@ export const createPriceRule = ({
         target_selection: 'entitled',
         allocation_method: 'across',
         prerequisite_customer_ids: [customerId],
-        prerequisite_variant_ids: targetVariantIds,
+        entitled_variant_ids: targetVariantIds,
         once_per_customer: true,
         usage_limit: 1,
         allocation_limit: 1,
+        starts_at: dayjs().format('YYYY-MM-DDTHH:mm:ssZ'),
       },
-    },
-  });
+    });
+    return response.data.price_rule;
+  } catch (err) {
+    console.log('Error in createPRiceRule', err);
+  }
 };
 
 export const updatePriceRule = ({
@@ -59,13 +64,15 @@ export const createDiscountCode = async ({
   priceRuleId: number;
   priceRuleTitle: string;
 }) => {
+  console.log(
+    'Making req to shopify with',
+    `/price_rules/${priceRuleId}/discount_codes.json`
+  );
   const res = await axios.post(
     ROOT_ENDPOINT + `/price_rules/${priceRuleId}/discount_codes.json`,
     {
-      data: {
-        discount_code: {
-          code: priceRuleTitle,
-        },
+      discount_code: {
+        code: priceRuleTitle,
       },
     }
   );

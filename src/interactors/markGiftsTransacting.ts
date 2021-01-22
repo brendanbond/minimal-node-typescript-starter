@@ -10,7 +10,7 @@ const constructNewGifts = (
   giftLevelIds.forEach((id) => {
     const idx = newGifts.findIndex(({ giftLevelId }) => giftLevelId === id);
     if (idx === -1) {
-      throw new Error('thats weird, should exist');
+      return;
     }
     newGifts[idx] = {
       ...newGifts[idx],

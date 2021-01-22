@@ -48,12 +48,13 @@ export const handleRedeemRequest = async (
       const newTitle = generateEncodedPriceRuleTitle(
         targetVariants.map(({ giftLevelId }) => giftLevelId)
       );
-      priceRule = await createPriceRule({
+     priceRule = await createPriceRule({
         customerId,
         amount,
         targetVariantIds: targetVariants.map(({ variantId }) => variantId),
         newTitle,
       });
+      console.log('priceRule:', priceRule);
       discountCode = await createDiscountCode({
         priceRuleId: priceRule.id,
         priceRuleTitle: priceRule.title,
@@ -62,7 +63,7 @@ export const handleRedeemRequest = async (
 
     res.send({ discountCode });
   } catch (error) {
-    // deal with error
+    console.log('Error in redeem request handler!', error);
   }
 };
 

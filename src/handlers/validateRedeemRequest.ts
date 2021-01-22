@@ -89,6 +89,7 @@ export const validateRedeemRequest = async (
     body: { customerId, selectedVariants },
   } = req;
 
+  console.log('Validating redeem request...', req.body);
   if (!customerId)
     return res.status(400).send('Bad request: ID cannot be null');
   if (!selectedVariants)
