@@ -18,9 +18,9 @@ const lineItemsContainTestProduct = (
   );
 };
 
-const discountCodeRedeemsGift = (discountCode: string) => {
+const discountCodeRedeemsGift = ({ code }: { code: string }) => {
   try {
-    decodePriceRuleTitle(discountCode);
+    decodePriceRuleTitle(code);
   } catch (e) {
     return false;
   }
@@ -65,11 +65,13 @@ export const handleNewOrderWebhookRequest = async (
     }
 
     if (customerEntry) {
+      console.log('Found customer entry, updating...');
       const updatedCustomerEntry: CustomerEntry = {
         ...customerEntry,
         unVestedPoints: customerEntry.unVestedPoints + newPoints,
         unVestedOrderIds: [...customerEntry.unVestedOrderIds, orderId],
       };
+      console.log('Writing customer entry...');
       await writeCustomerEntry(customerId, updatedCustomerEntry);
     } else {
       const newCustomerEntry: CustomerEntry = {
@@ -89,11 +91,13 @@ export const handleNewOrderWebhookRequest = async (
       netPoints: newPoints,
     };
     await writeOrderEntry(orderId, newOrderEntry);
-
+    console.log('Here are all of the discountCodes:', discountCodes);
     await Promise.all(
       discountCodes.map(async (discountCode) => {
+        console.log("Here's the discountCode", discountCode);
         if (discountCodeRedeemsGift(discountCode)) {
-          const giftLevelIdsToBeRedeemed = decodePriceRuleTitle(discountCode);
+          console.log('discountCodeRedeemsGift is true');
+          const giftLevelIdsToBeRedeemed = decodePriceRuleTitle(discountCode.code);
           await markGiftsRedeemed(customerId, giftLevelIdsToBeRedeemed);
         }
       })

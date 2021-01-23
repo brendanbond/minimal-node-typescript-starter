@@ -8,7 +8,9 @@ const constructNewGifts = (
 ) => {
   let newGifts = curGifts.slice();
   giftLevelIds.forEach((id) => {
-    const idx = newGifts.findIndex(({ giftLevelId }) => giftLevelId === id);
+    const idx = newGifts.findIndex(
+      ({ giftLevelId }) => Number(giftLevelId) === id
+    );
     if (idx === -1) {
       throw new Error('thats weird, should exist');
     }
@@ -26,6 +28,8 @@ export const markGiftsRedeemed = (
 ) => {
   return new Promise(async (resolve, reject) => {
     // const entryStr = JSON.stringify(entry);
+    console.log(`Marking gift redeemed for customer ${customerId}`);
+    console.log('giftLevelIds', giftLevelIds);
     const customerEntry = await getCustomerEntry(customerId);
     if (!customerEntry) {
       throw new Error(

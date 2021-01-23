@@ -9,7 +9,7 @@ const constructNewGifts = (
 ) => {
   let newGifts = curGifts.slice();
   giftLevelIds.forEach((id) => {
-    const idx = newGifts.findIndex(({ giftLevelId }) => giftLevelId === id);
+    const idx = newGifts.findIndex(({ giftLevelId }) => Number(giftLevelId) === id);
     let newGift: GiftStatus;
     if (idx === -1) {
       newGift = {

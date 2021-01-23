@@ -7,7 +7,7 @@ export interface INewOrderWebhookRequest extends Request {
     created_at: string;
     updated_at: string;
     subtotal_price: string;
-    discount_codes: string[];
+    discount_codes: { code: string }[];
     customer: {
       id: number;
     };

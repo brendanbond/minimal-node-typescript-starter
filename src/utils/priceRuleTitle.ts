@@ -22,12 +22,16 @@ export const decodePriceRuleTitle = (title: string) => {
     switch (element) {
       case 'GIFT1':
         giftsToRedeem.push(1);
+        break;
       case 'GIFT2':
         giftsToRedeem.push(2);
+        break;
       case 'GIFT3':
         giftsToRedeem.push(3);
+        break;
     }
   });
+  console.log('giftsToRedeem', giftsToRedeem);
   if (giftsToRedeem.length === 0) {
     throw new Error('not a valid loyalty price rule title');
   } else return giftsToRedeem;
