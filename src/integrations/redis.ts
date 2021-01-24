@@ -1,8 +1,16 @@
 import redis from 'redis';
 
-const globalCache = redis.createClient();
+let globalCache: redis.RedisClient;
 
-
+if (process.env.LOYALTY_POINTS_ENV) {
+  globalCache = redis.createClient({
+    prefix: process.env.LOYALTY_POINTS_ENV,
+  });
+} else {
+  globalCache = redis.createClient({
+    prefix: "FallbackPrefix"
+  });
+}
 
 globalCache.on('error', (error) => {
   console.error(error);
