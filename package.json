@@ -16,6 +16,7 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
+    "serve": "NODE_ENV=production ts-node -r dotenv/config ./src/index.ts",
     "develop": "NODE_ENV=development nodemon src/index.js",
     "ngrok": "ngrok start local-server -config ./ngrok.yml",
     "test": "jest"
