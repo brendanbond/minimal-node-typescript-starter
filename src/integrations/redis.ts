@@ -4,11 +4,11 @@ let globalCache: redis.RedisClient;
 
 if (process.env.LOYALTY_POINTS_ENV) {
   globalCache = redis.createClient({
-    prefix: process.env.LOYALTY_POINTS_ENV,
+    prefix: process.env.LOYALTY_POINTS_ENV + ':',
   });
 } else {
   globalCache = redis.createClient({
-    prefix: "FallbackPrefix"
+    prefix: 'loyalty-fallback:',
   });
 }
 
