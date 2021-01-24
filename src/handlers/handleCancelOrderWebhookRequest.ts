@@ -36,9 +36,12 @@ export const handleCancelOrderWebhookRequest = async (
       if (customerEntry) {
         const lessPoints = Math.floor(Number(subTotal));
         const orderIndex = customerEntry.unVestedOrderIds.findIndex(
-          (unVestedOrderId) => unVestedOrderId === orderId
+          (unVestedOrderId) => {
+            console.log(unVestedOrderId, '<=>', orderId);
+            return Number(unVestedOrderId) === Number(orderId);
+          }
         );
-        if (orderIndex > 1) {
+        if (orderIndex > -1) {
           const newCustomerEntry: CustomerEntry = {
             ...customerEntry,
             unVestedPoints: customerEntry.unVestedPoints - lessPoints,
@@ -58,6 +61,7 @@ export const handleCancelOrderWebhookRequest = async (
         );
       }
     }
+    res.sendStatus(200);
   } catch (error) {
     console.error('Error while handling cancel order webhook request:', error);
   }
