@@ -22,7 +22,10 @@ export type CustomerEntry = {
   vestedPoints: number;
   gifts: GiftStatus[];
   unVestedOrderIds: number[];
+  vestedOrderIds: number[];
   currentPriceRuleId: number | null; // users may only have one price rule in the wild at a time
+  vip: boolean;
+  onApproval: boolean;
 };
 
 export interface ITargetVariant {

@@ -6,10 +6,13 @@ import { CustomerEntry, GiftRedemptionStatus, ITargetVariant } from '../types';
 import { IRedeemRequest } from './types';
 
 const testGiftLevel = (giftLevelId: any) => {
+  console.log('giftLevelId:', giftLevelId);
   if (typeof giftLevelId !== 'number') {
+    console.log('giftLevelId is not a number, returning false');
     return false;
   }
   if (giftLevels.findIndex(({ id }) => id === giftLevelId) === -1) {
+    console.log('giftLevelId not found in constants');
     return false;
   }
   return true;

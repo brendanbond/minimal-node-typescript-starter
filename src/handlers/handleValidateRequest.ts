@@ -28,6 +28,11 @@ export const handleValidateRequest = async (req: Request, res: Response) => {
   } else {
     const response =
       customerEntry.vestedPoints >= gift.pointsNeeded &&
+      !customerEntry.gifts.some(
+        (customerGift) =>
+          customerGift.giftLevelId === gift.id &&
+          customerGift.status === 'REDEEMED'
+      ) &&
       collectionId === gift.collectionId;
     res.status(200).json(response);
   }

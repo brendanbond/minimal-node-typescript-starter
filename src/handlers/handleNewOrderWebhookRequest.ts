@@ -78,8 +78,11 @@ export const handleNewOrderWebhookRequest = async (
         unVestedPoints: newPoints,
         vestedPoints: 0,
         unVestedOrderIds: [orderId],
+        vestedOrderIds: [],
         gifts: [],
         currentPriceRuleId: null,
+        vip: false,
+        onApproval: false,
       };
       await writeCustomerEntry(customerId, newCustomerEntry);
     }
@@ -97,7 +100,9 @@ export const handleNewOrderWebhookRequest = async (
         console.log("Here's the discountCode", discountCode);
         if (discountCodeRedeemsGift(discountCode)) {
           console.log('discountCodeRedeemsGift is true');
-          const giftLevelIdsToBeRedeemed = decodePriceRuleTitle(discountCode.code);
+          const giftLevelIdsToBeRedeemed = decodePriceRuleTitle(
+            discountCode.code
+          );
           await markGiftsRedeemed(customerId, giftLevelIdsToBeRedeemed);
         }
       })
