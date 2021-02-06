@@ -43,6 +43,8 @@ export const handlePointsRequest = async (req: Request, res: Response) => {
       nextOrderIdToVest: null,
       nextOrderVestingDate: null,
       gifts: [],
+      vestedOrders: [],
+      unVestedOrders: [],
     };
     res.status(200).json(response);
   } else {
