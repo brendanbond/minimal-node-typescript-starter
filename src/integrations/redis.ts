@@ -5,10 +5,12 @@ let globalCache: redis.RedisClient;
 if (process.env.LOYALTY_POINTS_ENV) {
   globalCache = redis.createClient({
     prefix: process.env.LOYALTY_POINTS_ENV + ':',
+    port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
   });
 } else {
   globalCache = redis.createClient({
     prefix: 'loyalty-fallback:',
+    port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
   });
 }
 
