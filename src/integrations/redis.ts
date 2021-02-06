@@ -2,6 +2,8 @@ import redis from 'redis';
 
 let globalCache: redis.RedisClient;
 
+console.log('process.env.REDIS_PORT', process.env.REDIS_PORT);
+
 if (process.env.LOYALTY_POINTS_ENV) {
   globalCache = redis.createClient({
     prefix: process.env.LOYALTY_POINTS_ENV + ':',
