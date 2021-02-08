@@ -24,24 +24,32 @@ export const handleRefundOrderWebhookRequest = async (
 
     if (orderEntry) {
       const customerId = orderEntry.customerId;
-      const lessPoints = refundLineItems.reduce(
-        (acc, lineItem) => acc + lineItem.quantity * lineItem.subtotal,
-        0
-      );
-
-      const updatedOrderEntry: OrderEntry = {
-        ...orderEntry,
-        netPoints: orderEntry.netPoints - lessPoints,
-      };
-      await writeOrderEntry(orderId, updatedOrderEntry);
-
       const customerEntry = await getCustomerEntry(customerId);
       if (customerEntry) {
-        const newCustomerEntry: CustomerEntry = {
-          ...customerEntry,
-          unVestedPoints: customerEntry.unVestedPoints - lessPoints,
-        };
-        await writeCustomerEntry(customerId, newCustomerEntry);
+        const unVestedOrder = customerEntry.unVestedOrderIds.find(
+          (unVestedOrderId) => unVestedOrderId === orderId
+        );
+        if (unVestedOrder) {
+          const lessPoints = refundLineItems.reduce(
+            (acc, lineItem) => acc + lineItem.quantity * lineItem.subtotal,
+            0
+          );
+          const newCustomerEntry: CustomerEntry = {
+            ...customerEntry,
+            unVestedPoints: customerEntry.unVestedPoints - lessPoints,
+          };
+          await writeCustomerEntry(customerId, newCustomerEntry);
+
+          const updatedOrderEntry: OrderEntry = {
+            ...orderEntry,
+            netPoints: orderEntry.netPoints - lessPoints,
+          };
+          await writeOrderEntry(orderId, updatedOrderEntry);
+        } else {
+          throw new Error(
+            `Order ${orderId} was refunded but the points have already vested or the order is not contained in unVestedOrderIds`
+          );
+        }
       } else {
         throw new Error(
           `We have order ${orderId} in the cache but not the associated customer ${customerId}`
