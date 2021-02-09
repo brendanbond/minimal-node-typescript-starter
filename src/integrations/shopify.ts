@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 import { IShopifyOrdersQueryResponseItem } from '../types';
-
-const rootEndpoint = `https://${process.env.SHOPIFY_API_KEY}:${process.env.SHOPIFY_API_PASSWORD}@${process.env.SHOPIFY_STORE_NAME}.myshopify.com/admin/api/${process.env.SHOPIFY_API_VERSION}`;
+import { ROOT_ENDPOINT } from '../data/constants';
 
 // TODO: ADD PAGINATION
 export const getOrdersSinceDate = async (
@@ -11,7 +10,7 @@ export const getOrdersSinceDate = async (
   if (!process.env.SHOPIFY_API_KEY || !process.env.SHOPIFY_API_PASSWORD)
     throw new Error('Shopify API key and password cannot be null');
   const { data, status } = await axios.get(
-    `${rootEndpoint}/orders.json?created_at_min=${date}`
+    `${ROOT_ENDPOINT}/orders.json?created_at_min=${date}`
   );
   if (status !== 200) {
     throw new Error('Order fetch returned negative status');

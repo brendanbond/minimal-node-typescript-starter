@@ -3,7 +3,7 @@ export const constants: {
   vestTimeUnit: 'second' | 'minute' | 'day';
 } = {
   vestTimeUnit: 'minute',
-  vestTimeAmount: 20,
+  vestTimeAmount: 10,
 };
 
-export const ROOT_ENDPOINT = `https://${process.env.SHOPIFY_API_KEY}:${process.env.SHOPIFY_API_PASSWORD}@${process.env.SHOPIFY_STORE_NAME}.myshopify.com/admin/api/${process.env.SHOPIFY_API_VERSION}`;
+export const ROOT_ENDPOINT = `https://${process.env.SHOPIFY_API_KEY}:${process.env.SHOPIFY_API_PASSWORD}@${process.env.SHOPIFY_SHOP_NAME}.myshopify.com/admin/api/${process.env.SHOPIFY_API_VERSION}`;
