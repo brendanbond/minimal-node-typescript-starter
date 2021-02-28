@@ -1,5 +1,9 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
+
 import { ROOT_ENDPOINT } from '../../data/constants';
+
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
 
 export const calculateSumPriceOfTargetVariants = async (
   targetVariantIds: number[]

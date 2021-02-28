@@ -41,3 +41,36 @@ export interface IRedeemRequest extends Request {
     }[];
   };
 }
+
+enum PaymentMethod {
+  CreditCard = 'credit_card',
+  Cash = 'cash',
+  AndroidPay = 'android_pay',
+  ApplePay = 'apple_pay',
+  GooglePay = 'google_pay',
+  SamsungPay = 'samsung_pay',
+  ShopifyPay = 'shopify_pay',
+  Amazon = 'amazon',
+  Klarna = 'klarna',
+  Paypal = 'paypal',
+  Unknown = 'unknown',
+  Other = 'other',
+}
+
+export interface ITenderTransactionWebhookRequest extends Request {
+  body: {
+    readonly id: number;
+    readonly order_id: number;
+    readonly amount: string;
+    readonly currency: string;
+    readonly user_id: number;
+    readonly test: boolean;
+    readonly processed_at: string;
+    readonly remote_reference: string;
+    readonly payment_details: {
+      credit_card_number: string;
+      credit_card_company: string;
+    };
+    readonly payment_method: PaymentMethod;
+  };
+}

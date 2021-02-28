@@ -1,8 +1,11 @@
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-const getCustomerTags = async (customerId: number): Promise<string> => {
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
+
+const fetchCustomerTags = async (customerId: number): Promise<string> => {
   try {
     const response = await axios.get(
       ROOT_ENDPOINT + `/customers/${customerId}.json`
@@ -19,7 +22,7 @@ export const addTagsToCustomerProfile = async (
   tags: string[]
 ) => {
   try {
-    const existingTags = await getCustomerTags(customerId);
+    const existingTags = await fetchCustomerTags(customerId);
     await axios.put(ROOT_ENDPOINT + `/customers/${customerId}.json`, {
       customer: {
         id: customerId,
@@ -27,6 +30,7 @@ export const addTagsToCustomerProfile = async (
       },
     });
   } catch (err) {
+    console.error('error:', err);
     throw new Error('Error while trying to add tag to customer profile');
   }
 };

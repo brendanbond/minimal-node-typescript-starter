@@ -18,30 +18,26 @@ export type GiftStatus = {
 };
 
 export type CustomerEntry = {
+  id: number;
   unVestedPoints: number;
   vestedPoints: number;
   gifts: GiftStatus[];
   unVestedOrderIds: number[];
   vestedOrderIds: number[];
+  transactionIds: number[];
   currentPriceRuleId: number | null; // users may only have one price rule in the wild at a time
   vip: boolean;
   onApproval: boolean;
 };
 
+export type TransactionEntry = {
+  id: number;
+  orderId: number;
+  amount: string;
+  processedAt: string;
+  processedForPoints: boolean;
+};
 export interface ITargetVariant {
   variantId: number;
   giftLevelId: number;
-}
-export interface IShopifyOrdersQueryResponseItem {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  cancelled_at: string | null;
-  subtotal_price: string;
-  refunds: {
-    refund_line_items: { quantity: number; subtotal: number }[];
-  }[];
-  customer: {
-    id: number;
-  };
 }

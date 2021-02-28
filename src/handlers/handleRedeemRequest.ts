@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { IRedeemRequest } from './types';
 import { CustomerEntry, ITargetVariant } from '../types';
-import { generateEncodedPriceRuleTitle } from '../utils/priceRuleTitle';
+import { generateEncodedPriceRuleTitle } from '../utils';
 import {
   createPriceRule,
   createDiscountCode,

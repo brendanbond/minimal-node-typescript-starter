@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 
 import {
   getAllCustomerEntryIds,
@@ -11,11 +12,12 @@ import { CustomerEntry } from '../types';
 import { asyncForEach } from '../utils';
 import { constants } from '../data';
 
+dayjs.extend(utc);
+
 export const vestEligiblePoints = async () => {
   const customerIds = await getAllCustomerEntryIds();
   const today = dayjs();
 
-  console.log('Vesting eligible points...');
   await asyncForEach<number>(customerIds, async (customerId) => {
     const customerEntry = await getCustomerEntry(customerId);
     if (!customerEntry) {
@@ -32,12 +34,11 @@ export const vestEligiblePoints = async () => {
         );
       }
       const createdAt = dayjs(orderEntry.dateTimeCreated);
-      const vestingDate = createdAt.add(
-        constants.vestTimeAmount,
-        constants.vestTimeUnit
-      );
+      const vestingDate = createdAt
+        .add(constants.vestTimeAmount, constants.vestTimeUnit)
+        .utc();
 
-      if (today.isAfter(vestingDate)) {
+      if (today.utc().isAfter(vestingDate)) {
         const orderIndex = customerEntry.unVestedOrderIds.findIndex(
           (unVestedOrderId) => unVestedOrderId === orderEntry.id
         );

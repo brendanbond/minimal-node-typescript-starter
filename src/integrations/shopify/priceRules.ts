@@ -1,6 +1,10 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
+import axiosRetry from 'axios-retry';
+
 import { ROOT_ENDPOINT } from '../../data/constants';
+
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
 
 export const createPriceRule = async ({
   amount,

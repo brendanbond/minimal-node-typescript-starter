@@ -7,6 +7,11 @@ import { getAllOrderEntryIds } from './getAllOrderEntryIds';
 import { deleteOrderEntry } from './deleteOrderEntry';
 import { markGiftsRedeemed } from './markGiftsRedeemed';
 import { markGiftsTransacting } from './markGiftsTransacting';
+import { writeTransactionEntry } from './writeTransactionEntry';
+import { getTransactionEntry } from './getTransactionEntry';
+import { getAllTransactionEntryIds } from './getAllTransactionEntryIds';
+import { processUnCachedOrderTransaction } from './processUnCachedOrderTransaction';
+import { processExistingOrderTransaction } from './processCachedOrderTransaction';
 
 export {
   getCustomerEntry,
@@ -18,4 +23,9 @@ export {
   deleteOrderEntry,
   markGiftsRedeemed,
   markGiftsTransacting,
+  getTransactionEntry,
+  writeTransactionEntry,
+  getAllTransactionEntryIds,
+  processExistingOrderTransaction,
+  processUnCachedOrderTransaction as processNewOrderTransaction,
 };

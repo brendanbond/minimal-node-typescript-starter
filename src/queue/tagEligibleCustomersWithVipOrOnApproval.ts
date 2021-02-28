@@ -9,7 +9,6 @@ import { asyncForEach } from '../utils';
 export const tagEligibleCustomersWithVipOrOnApproval = async () => {
   const customerIds = await getAllCustomerEntryIds();
 
-  console.log('Checking customer VIP/On-Approval eligibility...');
   await asyncForEach<number>(customerIds, async (customerId) => {
     const customerEntry = await getCustomerEntry(customerId);
     if (!customerEntry) {
@@ -17,7 +16,7 @@ export const tagEligibleCustomersWithVipOrOnApproval = async () => {
         'Customer ID contained in customers set does not have corresponding customer entry'
       );
     }
-    
+
     if (customerEntry.vestedPoints >= 2000 && !customerEntry.onApproval) {
       console.log(`Customer ${customerId} has reached On-Approval status!`);
       await addTagsToCustomerProfile(customerId, ['On-Approval']);

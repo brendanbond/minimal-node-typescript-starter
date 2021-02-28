@@ -12,12 +12,14 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "node-cron": "^2.0.3",
+    "queue": "^6.0.2",
     "redis": "^3.0.2",
     "uuid": "^8.3.2"
   },
   "scripts": {
     "serve": "NODE_ENV=production ts-node -r dotenv/config ./src/index.ts",
     "develop": "NODE_ENV=development nodemon src/index.js",
+    "develop-test-store": "NODE_ENV=development ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env.test",
     "ngrok": "ngrok start local-server -config ./ngrok.yml",
     "test": "jest"
   },
