@@ -83,6 +83,7 @@ const validateGiftElibility = (
   }
   return true;
 };
+
 export const validateRedeemRequest = async (
   req: IRedeemRequest,
   res: Response,

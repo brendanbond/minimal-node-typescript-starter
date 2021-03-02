@@ -11,16 +11,14 @@ import dayjs from 'dayjs';
 axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
 
 export const fetchTenderTransactions = async (
-  sinceDate?: string,
-  limit?: number
+  limit: number
 ): Promise<ShopifyTenderTransaction[]> => {
   try {
     const response = await axios.get<IShopifyTenderTransactionsResponse>(
       `${ROOT_ENDPOINT}/tender_transactions.json`,
       {
         params: {
-          limit: limit || 50,
-          ...(sinceDate ? { processed_at_min: sinceDate } : {}),
+          limit: limit,
         },
       }
     );

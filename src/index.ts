@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 
 import { initiateQueue } from './queue';
+// import { instantiateCronJobs } from './cron';
 import {
   handleRedeemRequest,
   validateRedeemRequest,
@@ -13,6 +14,7 @@ import {
 } from './handlers';
 
 const queue = initiateQueue();
+// instantiateCronJobs();
 
 const app = express();
 app.use(express.json());

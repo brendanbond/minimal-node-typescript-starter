@@ -4,6 +4,11 @@ export type ShopifyOrder = {
   customer: {
     id: number;
   };
+  discount_codes: {
+    code: string;
+    amount: string;
+    type: 'fixed_amount' | 'percentage' | 'shipping';
+  }[];
 };
 
 export interface IShopifyOrderAPIResponse {
