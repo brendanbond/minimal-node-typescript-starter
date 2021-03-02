@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry';
 import { ROOT_ENDPOINT } from '../../data/constants';
 import { IShopifyOrderAPIResponse, ShopifyOrder } from './types';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5 });
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5, shouldResetTimeout: true  });
 
 export const fetchOrder = async (orderId: number): Promise<ShopifyOrder> => {
   try {
