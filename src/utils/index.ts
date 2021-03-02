@@ -4,10 +4,12 @@ import {
   decodePriceRuleTitle,
 } from './priceRuleTitle';
 import { convertAmountStringToInteger } from './convertAmountStringToInteger';
+import { sleep } from './sleep';
 
 export {
   asyncForEach,
   generateEncodedPriceRuleTitle,
   decodePriceRuleTitle,
   convertAmountStringToInteger,
+  sleep,
 };

@@ -15,6 +15,7 @@ import { constants } from '../data';
 dayjs.extend(utc);
 
 export const vestEligiblePoints = async () => {
+  console.log('Vesting eligible points...');
   const customerIds = await getAllCustomerEntryIds();
   const today = dayjs();
 

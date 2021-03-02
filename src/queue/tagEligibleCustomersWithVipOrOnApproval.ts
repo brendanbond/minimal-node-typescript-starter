@@ -7,6 +7,7 @@ import {
 import { asyncForEach } from '../utils';
 
 export const tagEligibleCustomersWithVipOrOnApproval = async () => {
+  console.log("Checking for points and tags...");
   const customerIds = await getAllCustomerEntryIds();
 
   await asyncForEach<number>(customerIds, async (customerId) => {

@@ -10,6 +10,7 @@ import { TransactionEntry } from '../types';
 import { asyncForEach } from '../utils';
 
 export const processCachedTransactions = async () => {
+  console.log("Processing cached transactions...");
   const cachedTransactionIds = await getAllTransactionEntryIds();
 
   await asyncForEach(cachedTransactionIds, async (cachedTransactionId) => {
