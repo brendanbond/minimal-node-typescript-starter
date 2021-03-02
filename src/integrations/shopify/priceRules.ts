@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry';
 
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5 });
 
 export const createPriceRule = async ({
   amount,
