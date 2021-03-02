@@ -1,9 +1,8 @@
 import axios from 'axios';
-import axiosRetry from 'axios-retry';
-
+import * as rax from 'retry-axios';
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5, shouldResetTimeout: true  });
+const interceptorId = rax.attach();
 
 export const calculateSumPriceOfTargetVariants = async (
   targetVariantIds: number[]

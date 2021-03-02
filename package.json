@@ -5,7 +5,6 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.0",
-    "axios-retry": "^3.1.9",
     "cors": "^2.8.5",
     "dayjs": "^1.9.6",
     "dotenv": "^8.2.0",
@@ -14,6 +13,7 @@
     "node-cron": "^2.0.3",
     "queue": "^6.0.2",
     "redis": "^3.0.2",
+    "retry-axios": "^2.4.0",
     "uuid": "^8.3.2"
   },
   "scripts": {

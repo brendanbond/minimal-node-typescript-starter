@@ -1,9 +1,8 @@
 import axios from 'axios';
-import axiosRetry from 'axios-retry';
-
+import * as rax from 'retry-axios';
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5 });
+const interceptorId = rax.attach();
 
 const fetchCustomerTags = async (customerId: number): Promise<string> => {
   try {

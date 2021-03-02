@@ -1,10 +1,10 @@
 import axios from 'axios';
-import axiosRetry from 'axios-retry';
+import * as rax from 'retry-axios';
 
 import { ROOT_ENDPOINT } from '../../data/constants';
 import { IShopifyOrderAPIResponse, ShopifyOrder } from './types';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5, shouldResetTimeout: true  });
+const interceptorId = rax.attach();
 
 export const fetchOrder = async (orderId: number): Promise<ShopifyOrder> => {
   try {

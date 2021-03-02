@@ -1,6 +1,5 @@
 import axios from 'axios';
-import axiosRetry from 'axios-retry';
-
+import * as rax from 'retry-axios';
 import {
   IShopifyTenderTransactionsResponse,
   ShopifyTenderTransaction,
@@ -8,7 +7,7 @@ import {
 import { ROOT_ENDPOINT } from '../../data/constants';
 import dayjs from 'dayjs';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, retries: 5, shouldResetTimeout: true });
+const interceptorId = rax.attach();
 
 export const fetchTenderTransactions = async (
   limit: number
