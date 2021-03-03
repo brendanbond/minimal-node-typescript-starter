@@ -27,10 +27,10 @@ const validateSelectedVariants: (
   if (selectedVariants.length === 0) {
     throw new Error('no elements in selectedVariants Array');
   }
-  let returnVariants: ITargetVariant[] = [];
+  const returnVariants: ITargetVariant[] = [];
   for (let i = 0; i < selectedVariants.length; i++) {
-    let cur = selectedVariants[i];
-    let target = {
+    const cur = selectedVariants[i];
+    const target = {
       variantId: -1,
       giftLevelId: -1,
     };

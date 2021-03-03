@@ -1,7 +1,7 @@
 import { globalCache } from '../integrations/redis';
 
-export const getAllOrderEntryIds = () => {
-  return new Promise<number[]>((resolve, reject) => {
+export const getAllOrderEntryIds = () =>
+  new Promise<number[]>((resolve, reject) => {
     globalCache.smembers('orders', (err, res) => {
       if (err) {
         reject(err);
@@ -10,4 +10,3 @@ export const getAllOrderEntryIds = () => {
       }
     });
   });
-};

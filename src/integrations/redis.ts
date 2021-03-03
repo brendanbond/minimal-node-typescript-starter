@@ -1,3 +1,4 @@
+/* eslint-disable import/no-mutable-exports */
 import redis from 'redis';
 
 let globalCache: redis.RedisClient;

@@ -1,7 +1,7 @@
 import { globalCache } from '../integrations/redis';
 
-export const deleteOrderEntry = async (id: number) => {
-  return new Promise((resolve, reject) => {
+export const deleteOrderEntry = async (id: number) =>
+  new Promise((resolve, reject) => {
     globalCache.del(`order:${id}`, (err, res) => {
       if (err) {
         reject(err);
@@ -17,4 +17,3 @@ export const deleteOrderEntry = async (id: number) => {
       }
     });
   });
-};

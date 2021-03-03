@@ -21,7 +21,8 @@
     "develop": "NODE_ENV=development nodemon src/index.js",
     "develop-test-store": "NODE_ENV=points-development ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env.test",
     "ngrok": "ngrok start local-server -config ./ngrok.yml",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.8",

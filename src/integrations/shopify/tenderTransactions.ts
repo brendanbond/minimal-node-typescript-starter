@@ -5,9 +5,8 @@ import {
   ShopifyTenderTransaction,
 } from './types';
 import { ROOT_ENDPOINT } from '../../data/constants';
-import dayjs from 'dayjs';
 
-const interceptorId = rax.attach();
+rax.attach();
 
 export const fetchTenderTransactions = async (
   limit: number
@@ -17,7 +16,7 @@ export const fetchTenderTransactions = async (
       `${ROOT_ENDPOINT}/tender_transactions.json`,
       {
         params: {
-          limit: limit,
+          limit,
         },
       }
     );

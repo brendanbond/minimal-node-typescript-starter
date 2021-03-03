@@ -1,12 +1,12 @@
-import { globalCache } from '../integrations/redis';
 import { CustomerEntry, GiftRedemptionStatus } from '../types';
 import { getCustomerEntry } from './getCustomerEntry';
+import { writeCustomerEntry } from './writeCustomerEntry';
 
 const constructNewGifts = (
   curGifts: CustomerEntry['gifts'],
   giftLevelIds: number[]
 ) => {
-  let newGifts = curGifts.slice();
+  const newGifts = curGifts.slice();
   giftLevelIds.forEach((id) => {
     const idx = newGifts.findIndex(
       ({ giftLevelId }) => Number(giftLevelId) === id
@@ -22,41 +22,22 @@ const constructNewGifts = (
   return newGifts;
 };
 
-export const markGiftsRedeemed = (
+export const markGiftsRedeemed = async (
   customerId: number,
   giftLevelIds: number[]
 ) => {
-  return new Promise(async (resolve, reject) => {
-    // const entryStr = JSON.stringify(entry);
-    console.log(`Marking gift redeemed for customer ${customerId}`);
-    console.log('giftLevelIds', giftLevelIds);
-    const customerEntry = await getCustomerEntry(customerId);
-    if (!customerEntry) {
-      throw new Error(
-        `no customer found for customer Id ${customerId} while marking gifts redeemed`
-      );
-    }
-    const newEntry: CustomerEntry = {
-      ...customerEntry,
-      gifts: constructNewGifts(customerEntry.gifts, giftLevelIds),
-    };
-    globalCache.set(
-      `customer:${customerId}`,
-      JSON.stringify(newEntry),
-      (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          globalCache.sadd('customers', `${customerId}`, (err, res) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-            }
-          });
-          resolve(res);
-        }
-      }
+  // const entryStr = JSON.stringify(entry);
+  console.log(`Marking gift redeemed for customer ${customerId}`);
+  console.log('giftLevelIds', giftLevelIds);
+  const customerEntry = await getCustomerEntry(customerId);
+  if (!customerEntry) {
+    throw new Error(
+      `no customer found for customer Id ${customerId} while marking gifts redeemed`
     );
-  });
+  }
+  const newEntry: CustomerEntry = {
+    ...customerEntry,
+    gifts: constructNewGifts(customerEntry.gifts, giftLevelIds),
+  };
+  await writeCustomerEntry(customerId, newEntry);
 };

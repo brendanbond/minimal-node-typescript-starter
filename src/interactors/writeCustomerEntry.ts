@@ -1,8 +1,8 @@
 import { globalCache } from '../integrations/redis';
 import { CustomerEntry } from '../types';
 
-export const writeCustomerEntry = (id: number, entry: CustomerEntry) => {
-  return new Promise((resolve, reject) => {
+export const writeCustomerEntry = (id: number, entry: CustomerEntry) =>
+  new Promise((resolve, reject) => {
     const entryStr = JSON.stringify(entry);
     globalCache.set(`customer:${id}`, entryStr, (err, res) => {
       if (err) {
@@ -19,4 +19,3 @@ export const writeCustomerEntry = (id: number, entry: CustomerEntry) => {
       }
     });
   });
-};

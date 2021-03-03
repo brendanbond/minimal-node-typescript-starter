@@ -1,8 +1,8 @@
 import { globalCache } from '../integrations/redis';
 import { CustomerEntry } from '../types';
 
-export const getCustomerEntry = (id: number): Promise<CustomerEntry | null> => {
-  return new Promise((resolve, reject) => {
+export const getCustomerEntry = (id: number): Promise<CustomerEntry | null> =>
+  new Promise((resolve, reject) => {
     globalCache.get(`customer:${id}`, (err, cache) => {
       if (err) reject(err);
 
@@ -15,4 +15,3 @@ export const getCustomerEntry = (id: number): Promise<CustomerEntry | null> => {
       } else resolve(null);
     });
   });
-};

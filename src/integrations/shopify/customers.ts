@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as rax from 'retry-axios';
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-const interceptorId = rax.attach();
+rax.attach();
 
 const fetchCustomerTags = async (customerId: number): Promise<string> => {
   try {

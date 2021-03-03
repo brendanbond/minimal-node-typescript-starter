@@ -4,7 +4,7 @@ import * as rax from 'retry-axios';
 
 import { ROOT_ENDPOINT } from '../../data/constants';
 
-const interceptorId = rax.attach();
+rax.attach();
 
 export const createPriceRule = async ({
   amount,
@@ -49,8 +49,7 @@ export const updatePriceRule = ({
   newAmount: number;
   priceRuleId: number;
   updatedTargetVariantIds: number[];
-}) => {
-  return axios.put(ROOT_ENDPOINT + `/price_rules/${priceRuleId}.json`, {
+}) => axios.put(ROOT_ENDPOINT + `/price_rules/${priceRuleId}.json`, {
     data: {
       price_rule: {
         id: priceRuleId,
@@ -59,7 +58,6 @@ export const updatePriceRule = ({
       },
     },
   });
-};
 
 export const createDiscountCode = async ({
   priceRuleId,

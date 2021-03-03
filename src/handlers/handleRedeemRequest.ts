@@ -56,7 +56,7 @@ export const handleRedeemRequest = async (
       });
     }
 
-    markGiftsTransacting(
+    await markGiftsTransacting(
       customerId,
       targetVariants.map(({ giftLevelId }) => giftLevelId),
       priceRule.id

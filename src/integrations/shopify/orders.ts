@@ -4,7 +4,7 @@ import * as rax from 'retry-axios';
 import { ROOT_ENDPOINT } from '../../data/constants';
 import { IShopifyOrderAPIResponse, ShopifyOrder } from './types';
 
-const interceptorId = rax.attach();
+rax.attach();
 
 export const fetchOrder = async (orderId: number): Promise<ShopifyOrder> => {
   try {

@@ -7,7 +7,7 @@ export const generateEncodedPriceRuleTitle = (giftLevelIds: number[]) => {
   }
   let string = 'LOYALTY';
   giftLevelIds.forEach((giftLevelId) => {
-    string = string + `|GIFT${giftLevelId}`;
+    string += `|GIFT${giftLevelId}`;
   });
   return `${string}|${uuid()}`;
 };
@@ -17,7 +17,7 @@ export const decodePriceRuleTitle = (title: string) => {
   if (firstElement !== 'LOYALTY') {
     throw new Error('not a valid loyalty price rule title');
   }
-  let giftsToRedeem: number[] = [];
+  const giftsToRedeem: number[] = [];
   restElements.forEach((element) => {
     switch (element) {
       case 'GIFT1':

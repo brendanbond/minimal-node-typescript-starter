@@ -1,15 +1,8 @@
 import { Response } from 'express';
 
-import { CustomerEntry, OrderEntry, TransactionEntry } from '../types';
+import { TransactionEntry } from '../types';
 import { ITenderTransactionWebhookRequest } from './types';
-import {
-  getCustomerEntry,
-  getOrderEntry,
-  writeCustomerEntry,
-  writeOrderEntry,
-  writeTransactionEntry,
-  getTransactionEntry,
-} from '../interactors';
+import { writeTransactionEntry, getTransactionEntry } from '../interactors';
 
 export const handleTenderTransactionWebhookRequest = async (
   req: ITenderTransactionWebhookRequest,

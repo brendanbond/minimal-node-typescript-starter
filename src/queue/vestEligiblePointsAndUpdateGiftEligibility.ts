@@ -3,7 +3,6 @@ import utc from 'dayjs/plugin/utc';
 
 import {
   getAllCustomerEntryIds,
-  getAllOrderEntryIds,
   getCustomerEntry,
   getOrderEntry,
   writeCustomerEntry,
@@ -54,7 +53,7 @@ export const vestEligiblePoints = async () => {
           ],
           vestedOrderIds: [...customerEntry.vestedOrderIds, orderEntry.id],
         };
-        writeCustomerEntry(orderEntry.customerId, newCustomerEntry);
+        await writeCustomerEntry(orderEntry.customerId, newCustomerEntry);
       }
     });
   });
