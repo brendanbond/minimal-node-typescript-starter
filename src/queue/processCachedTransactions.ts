@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/node';
+
 import {
   getAllTransactionEntryIds,
   getTransactionEntry,
@@ -10,15 +12,17 @@ import { TransactionEntry } from '../types';
 import { asyncForEach } from '../utils';
 
 export const processCachedTransactions = async () => {
-  console.log("Processing cached transactions...");
+  console.log('Processing cached transactions...');
   const cachedTransactionIds = await getAllTransactionEntryIds();
 
   await asyncForEach(cachedTransactionIds, async (cachedTransactionId) => {
     const transactionEntry = await getTransactionEntry(cachedTransactionId);
-    if (!transactionEntry)
-      throw new Error(
-        'Transaction ID exists in the transactions set but not in the key store'
+    if (!transactionEntry) {
+      Sentry.captureException(
+        `Transaction ID ${cachedTransactionId} exists in the transactions set but not in the key store`
       );
+      return;
+    }
     if (!transactionEntry.processedForPoints) {
       const orderId = transactionEntry.orderId;
 
@@ -40,6 +44,7 @@ export const processCachedTransactions = async () => {
           updatedTransactionEntry
         );
       } catch (error) {
+        Sentry.captureException(error);
         console.error('Error during transaction processing:', error);
       }
     }
