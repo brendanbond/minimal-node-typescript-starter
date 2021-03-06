@@ -1,4 +1,5 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
+import crypto from 'crypto';
 import cors from 'cors';
 import morgan from 'morgan';
 import * as Sentry from '@sentry/node';
@@ -13,7 +14,40 @@ import {
   handleValidateRequest,
   handleConstantsRequest,
   handleTenderTransactionWebhookRequest,
+  validateVerifiedWebhook,
 } from './handlers';
+
+const validateWebhook = (req: Request, res: Response, buffer: Buffer) => {
+  if (req.url.includes('/tender-transaction-webhook')) {
+    const hmac = req.get('X-Shopify-Hmac-Sha256');
+    if (!hmac) {
+      res.sendStatus(403);
+      return;
+    }
+    if (req.get(`x-${process.env.SHOPIFY_SHOP_NAME}-webhook-verified`))
+      throw new Error('Unexpected webhook verified header');
+    if (!process.env.SHOPIFY_WEBHOOK_SECRET) {
+      throw new Error('Shopify webhook secret cannot be undefined');
+    }
+    if (!buffer) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const hash = crypto
+      .createHmac('sha256', process.env.SHOPIFY_WEBHOOK_SECRET)
+      .update(buffer)
+      .digest('base64');
+    console.log('hash =>', hash);
+
+    if (hmac === hash) {
+      req.headers[`x-${process.env.SHOPIFY_SHOP_NAME}-webhook-verified`] =
+        '200';
+    } else {
+      res.sendStatus(403);
+    }
+  }
+};
 
 const queue = initiateQueue();
 // instantiateCronJobs();
@@ -34,11 +68,15 @@ Sentry.init({
 
 app.use(Sentry.Handlers.requestHandler() as express.RequestHandler);
 app.use(Sentry.Handlers.tracingHandler());
-app.use(express.json());
+app.use(express.json({ verify: validateWebhook }));
 app.use(cors());
 app.use(morgan('dev'));
 
-app.post('/tender-transaction-webhook', handleTenderTransactionWebhookRequest);
+app.post(
+  '/tender-transaction-webhook',
+  validateVerifiedWebhook,
+  handleTenderTransactionWebhookRequest
+);
 app.post('/redeem', validateRedeemRequest, handleRedeemRequest);
 app.get('/points/:customerId', handlePointsRequest);
 app.get('/validate/:customerId', handleValidateRequest);

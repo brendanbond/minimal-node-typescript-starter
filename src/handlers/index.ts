@@ -7,6 +7,7 @@ import { handlePointsRequest } from './handlePointsRequest';
 import { handleValidateRequest } from './handleValidateRequest';
 import { handleConstantsRequest } from './handleConstantsRequest';
 import { handleTenderTransactionWebhookRequest } from './handleTenderTransactionWebhookRequest';
+import { validateVerifiedWebhook } from './validateVerifiedWebhook';
 
 export {
   handleRedeemRequest,
@@ -18,4 +19,5 @@ export {
   handleValidateRequest,
   handleConstantsRequest,
   handleTenderTransactionWebhookRequest,
+  validateVerifiedWebhook,
 };

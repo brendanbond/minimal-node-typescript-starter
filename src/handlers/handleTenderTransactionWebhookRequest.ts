@@ -16,11 +16,11 @@ export const handleTenderTransactionWebhookRequest = async (
       'Received malformed POST request from Shopify tender transaction webhook'
     );
   }
+  res.sendStatus(200);
 
   const cachedTransaction = await getTransactionEntry(id);
   if (cachedTransaction) {
     console.log('Already received this transaction');
-    res.sendStatus(200);
   } else {
     const transactionEntry: TransactionEntry = {
       id,
@@ -30,7 +30,6 @@ export const handleTenderTransactionWebhookRequest = async (
       processedForPoints: false,
     };
     await writeTransactionEntry(id, transactionEntry);
-    res.sendStatus(200);
   }
 };
 
