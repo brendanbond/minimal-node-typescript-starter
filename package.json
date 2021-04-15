@@ -24,7 +24,8 @@
     "develop-test-store": "NODE_ENV=points-development ts-node -r dotenv/config ./src/index.ts dotenv_config_path=./.env.test ",
     "ngrok": "ngrok start local-server -config ./ngrok.yml",
     "test": "jest",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "compare": "ts-node -r dotenv/config ./src/scripts/compareTransactionsToCache.ts dotenv_config_path=./.env"
   },
   "devDependencies": {
     "@types/cors": "^2.8.8",

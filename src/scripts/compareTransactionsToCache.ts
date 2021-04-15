@@ -1,10 +1,7 @@
 import dayjs from 'dayjs';
-import dotenv from 'dotenv';
 
 import { fetchTenderTransactions } from '../integrations/shopify/tenderTransactions';
 import { getAllTransactionEntryIds } from '../interactors';
-
-dotenv.config({ path: ".env" });
 
 const compareTransactionsToCache = async () => {
   let finished = false;
