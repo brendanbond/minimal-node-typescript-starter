@@ -28,32 +28,59 @@ export const processExistingOrderTransaction = async (
     (unVestedOrderId) => unVestedOrderId === orderEntry.id
   );
   if (orderIndex === -1) {
-    console.log(
-      `Processed a new transaction for an cached order ${orderId} that wasn't in the customer's unVestedOrderIds array, so we're assuming it has already vested`
+    // Order has (hopefully) vested, check in the vested order IDs; we're now going to refund points after vesting
+    const vestedOrderIndex = customerEntry.vestedOrderIds.findIndex(
+      (vestedOrderId) => vestedOrderId === orderEntry.id
     );
-    return;
-  }
-
-  let updatedCustomerEntry: CustomerEntry;
-  // if it is a full refund, take the order off the board for vesting
-  if (netOrderPoints <= 0) {
-    updatedCustomerEntry = {
-      ...customerEntry,
-      unVestedPoints:
-        customerEntry.unVestedPoints + convertAmountStringToInteger(amount),
-      unVestedOrderIds: [
-        ...customerEntry.unVestedOrderIds.slice(0, orderIndex),
-        ...customerEntry.unVestedOrderIds.slice(orderIndex + 1),
-      ],
-      transactionIds: [...customerEntry.transactionIds, transactionEntry.id],
-    };
+    if (vestedOrderIndex === -1)
+      throw new Error(
+        `Received a transaction for cached order ${orderEntry.id} but can't find it in unvested OR vested orders arrays`
+      );
+    let updatedCustomerEntry: CustomerEntry;
+    // if it is a full refund, take the order out of the vested order array
+    if (netOrderPoints <= 0) {
+      updatedCustomerEntry = {
+        ...customerEntry,
+        vestedPoints:
+          customerEntry.vestedPoints + convertAmountStringToInteger(amount),
+        vestedOrderIds: [
+          ...customerEntry.vestedOrderIds.slice(0, vestedOrderIndex),
+          ...customerEntry.vestedOrderIds.slice(vestedOrderIndex + 1),
+        ],
+        transactionIds: [...customerEntry.transactionIds, transactionEntry.id],
+      };
+    } else {
+      updatedCustomerEntry = {
+        ...customerEntry,
+        vestedPoints:
+          customerEntry.vestedPoints + convertAmountStringToInteger(amount),
+        transactionIds: [...customerEntry.transactionIds, transactionEntry.id],
+      };
+    }
+    await writeCustomerEntry(customerEntry.id, updatedCustomerEntry);
   } else {
-    updatedCustomerEntry = {
-      ...customerEntry,
-      unVestedPoints:
-        customerEntry.unVestedPoints + convertAmountStringToInteger(amount),
-      transactionIds: [...customerEntry.transactionIds, transactionEntry.id],
-    };
+    // order hasn't vested, proceed as normal
+    let updatedCustomerEntry: CustomerEntry;
+    // if it is a full refund, take the order off the board for vesting
+    if (netOrderPoints <= 0) {
+      updatedCustomerEntry = {
+        ...customerEntry,
+        unVestedPoints:
+          customerEntry.unVestedPoints + convertAmountStringToInteger(amount),
+        unVestedOrderIds: [
+          ...customerEntry.unVestedOrderIds.slice(0, orderIndex),
+          ...customerEntry.unVestedOrderIds.slice(orderIndex + 1),
+        ],
+        transactionIds: [...customerEntry.transactionIds, transactionEntry.id],
+      };
+    } else {
+      updatedCustomerEntry = {
+        ...customerEntry,
+        unVestedPoints:
+          customerEntry.unVestedPoints + convertAmountStringToInteger(amount),
+        transactionIds: [...customerEntry.transactionIds, transactionEntry.id],
+      };
+    }
+    await writeCustomerEntry(customerEntry.id, updatedCustomerEntry);
   }
-  await writeCustomerEntry(customerEntry.id, updatedCustomerEntry);
 };
