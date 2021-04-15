@@ -1,5 +1,7 @@
 import axios from 'axios';
 import * as rax from 'retry-axios';
+import dayjs from 'dayjs';
+
 import {
   IShopifyTenderTransactionsResponse,
   ShopifyTenderTransaction,
@@ -9,7 +11,8 @@ import { ROOT_ENDPOINT } from '../../data/constants';
 rax.attach();
 
 export const fetchTenderTransactions = async (
-  limit: number
+  limit: number,
+  sinceDate?: string
 ): Promise<ShopifyTenderTransaction[]> => {
   try {
     const response = await axios.get<IShopifyTenderTransactionsResponse>(
@@ -17,6 +20,7 @@ export const fetchTenderTransactions = async (
       {
         params: {
           limit,
+          ...(sinceDate && { processed_at_min: dayjs(sinceDate).format() }),
         },
       }
     );
