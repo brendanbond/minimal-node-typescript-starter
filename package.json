@@ -12,7 +12,7 @@
     "serve": "NODE_ENV=production ts-node -r dotenv/config ./src/index.ts",
     "develop": "NODE_ENV=development nodemon src/index.js",
     "test": "jest",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.8",
